@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>레시피 북</title>
+    <title>모던 미니멀 레시피 북</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -51,26 +51,31 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between bg-white text-neutral-900">
 
-    <!-- Header (Expanded for wide screens) -->
+    <!-- Header -->
     <header class="border-b border-neutral-200 bg-white sticky top-0 z-30 px-6 py-4">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="resetFilters()">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showMainPage(); resetFilters();">
                 <div class="w-8 h-8 bg-neutral-950 text-white rounded flex items-center justify-center font-bold text-sm">
                     R
                 </div>
                 <h1 class="text-xl font-bold tracking-tight text-neutral-950">레시피 북</h1>
             </div>
 
-            <button onclick="openFormModal()" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2">
-                <i class="fa-solid fa-plus text-[10px]"></i>
-                <span>레시피 작성</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <!-- 조그만한 새로고침 버튼 -->
+                <button onclick="triggerRefresh()" title="새로고침" class="w-9 h-9 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded flex items-center justify-center transition text-xs">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+                <button onclick="openFormPage()" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span>레시피 작성</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-8 flex-grow w-full">
-        
+    <!-- ================= VIEW 1: MAIN PAGE ================= -->
+    <main id="mainViewContainer" class="max-w-7xl mx-auto px-6 py-8 flex-grow w-full">
         <!-- Search & Tag Filter Section -->
         <section class="mb-8 space-y-3 w-full">
             <!-- Search Bar -->
@@ -119,14 +124,123 @@
         </section>
     </main>
 
+    <!-- ================= VIEW 2: FULL PAGE FORM (WRITE / EDIT) ================= -->
+    <div id="formViewContainer" class="max-w-3xl mx-auto px-6 py-10 flex-grow w-full hidden">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-neutral-200">
+            <h2 id="formPageTitle" class="text-lg font-bold text-neutral-950">새 레시피 작성</h2>
+            <button onclick="showMainPage()" class="px-4 py-2 bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-900 font-semibold text-xs rounded transition flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-left"></i> 목록으로
+            </button>
+        </div>
+
+        <form id="recipeForm" onsubmit="handleFormSubmit(event)" class="text-xs flex flex-col space-y-6">
+            <input type="hidden" id="formRecipeId">
+
+            <!-- Image Upload Box -->
+            <div>
+                <label class="block font-bold text-neutral-900 mb-2">레시피 사진</label>
+                <div class="relative w-full h-56 bg-neutral-50 border border-neutral-200 rounded flex flex-col items-center justify-center text-neutral-400 group overflow-hidden">
+                    <img id="formImagePreview" src="" class="absolute inset-0 w-full h-full object-cover hidden">
+                    
+                    <div id="imagePlaceholderText" class="flex flex-col items-center justify-center space-y-2 pointer-events-none z-10 text-center px-4">
+                        <i class="fa-solid fa-camera text-2xl text-neutral-400"></i>
+                        <span class="text-xs font-semibold text-neutral-600">이미지 첨부 (클릭하여 파일 선택 및 자동 압축)</span>
+                    </div>
+
+                    <label class="absolute inset-0 cursor-pointer z-10 flex items-center justify-center bg-neutral-950/0 hover:bg-neutral-950/5 transition">
+                        <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Image URL Input -->
+            <div class="flex items-center gap-2">
+                <span class="text-[11px] text-neutral-500 font-semibold whitespace-nowrap">사진 URL:</span>
+                <input type="url" id="formImageUrl" oninput="updateImagePreviewFromUrl()" placeholder="https://example.com/image.jpg" 
+                       class="w-full px-3 py-2 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950">
+            </div>
+
+            <!-- Title & Summary -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-bold text-neutral-900 mb-1">제목 *</label>
+                    <input type="text" id="formTitle" required placeholder="예: 야채 계란말이" 
+                           class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-neutral-900 mb-1">소개 / 간단 설명</label>
+                    <input type="text" id="formDescription" placeholder="예: 알록달록 기본 계란말이" 
+                           class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-neutral-900 mb-1">태그 (쉼표로 구분)</label>
+                    <input type="text" id="formTags" placeholder="예: 한식, 반찬, 초간단" 
+                           class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                </div>
+            </div>
+
+            <!-- Dynamic Ingredients Entry Section -->
+            <div class="pt-2 border-t border-neutral-100">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="font-bold text-neutral-900">필요 재료 *</label>
+
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[11px] text-neutral-500 font-medium">작성할 인분:</span>
+                        <select id="formServingSelector" onchange="switchFormServingTab(this.value)" class="px-2.5 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
+                            <option value="1">1인분</option>
+                            <option value="2">2인분</option>
+                            <option value="3">3인분</option>
+                            <option value="4">4인분</option>
+                            <option value="5">5인분</option>
+                            <option value="6">6인분 이상</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="ingredientInputBoxes">
+                    <!-- Dynamically generated textareas -->
+                </div>
+                <p class="text-[11px] text-neutral-400 mt-1">※ 재료는 줄바꿈(엔터)으로 구분하여 작성해주세요. (예: 계란 2개)</p>
+            </div>
+
+            <!-- Cooking Steps -->
+            <div class="pt-2 border-t border-neutral-100">
+                <label class="block font-bold text-neutral-900 mb-1">조리 순서 (줄바꿈 구분) *</label>
+                <textarea id="formSteps" required rows="8" placeholder="1. 볼에 계란을 깨트린 뒤 소금을 넣고 잘 푼다.&#10;2. 다진 당근과 대파를 계란물에 섞는다.&#10;3. 팬에 기름을 두르고 조금씩 부어가며 익힌다." 
+                          class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[180px]"></textarea>
+            </div>
+
+            <!-- Source Section -->
+            <div class="pt-2 border-t border-neutral-100 space-y-3">
+                <label class="block font-bold text-neutral-900">출처 정보 (선택 사항)</label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <input type="text" id="formSourcePlatform" placeholder="플랫폼 (예: 유튜브, 인스타그램, 블로그)" 
+                               class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <input type="url" id="formSourceUrl" placeholder="URL 링크 (https://...)" 
+                               class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Buttons -->
+            <div class="pt-6 flex justify-end gap-3 border-t border-neutral-200">
+                <button type="button" onclick="showMainPage()" class="px-6 py-3 bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-900 font-semibold rounded text-xs transition">취소</button>
+                <button type="submit" class="px-8 py-3 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold rounded text-xs transition">저장하기</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Footer -->
     <footer class="py-6 text-center text-xs text-neutral-400 border-t border-neutral-200">
         <p>Recipe Archive</p>
     </footer>
 
-    <!-- ================= MODALS ================= -->
-
-    <!-- 1. DETAIL VIEW MODAL -->
+    <!-- ================= DETAIL VIEW MODAL (Keep as popup) ================= -->
     <div id="recipeDetailModal" class="fixed inset-0 bg-neutral-950/40 z-50 flex items-center justify-center p-4 hidden opacity-0 modal-backdrop">
         <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded border border-neutral-300 overflow-hidden flex flex-col scale-95 modal-content" id="detailModalCard">
             
@@ -199,119 +313,6 @@
         </div>
     </div>
 
-    <!-- 2. CREATE / EDIT FORM MODAL -->
-    <div id="recipeFormModal" class="fixed inset-0 bg-neutral-950/40 z-50 flex items-center justify-center p-4 hidden opacity-0 modal-backdrop">
-        <div class="bg-white w-full max-w-2xl max-h-[92vh] rounded border border-neutral-300 overflow-hidden flex flex-col scale-95 modal-content" id="formModalCard">
-            
-            <div class="px-6 py-4 border-b border-neutral-200 flex justify-between items-center bg-white flex-shrink-0">
-                <h3 id="formModalTitle" class="font-bold text-neutral-950 text-base">레시피 작성</h3>
-                <button onclick="closeFormModal()" class="text-neutral-400 hover:text-neutral-950 transition">
-                    <i class="fa-solid fa-xmark text-base"></i>
-                </button>
-            </div>
-
-            <div class="overflow-y-auto flex-grow p-6">
-                <form id="recipeForm" onsubmit="handleFormSubmit(event)" class="text-xs flex flex-col space-y-5">
-                    <input type="hidden" id="formRecipeId">
-
-                    <!-- Image Upload Box -->
-                    <div class="relative w-full h-48 bg-neutral-50 border border-neutral-200 rounded flex flex-col items-center justify-center text-neutral-400 group overflow-hidden flex-shrink-0">
-                        <img id="formImagePreview" src="" class="absolute inset-0 w-full h-full object-cover hidden">
-                        
-                        <div id="imagePlaceholderText" class="flex flex-col items-center justify-center space-y-2 pointer-events-none z-10 text-center px-4">
-                            <i class="fa-solid fa-camera text-2xl text-neutral-400"></i>
-                            <span class="text-xs font-semibold text-neutral-600">이미지 첨부 (클릭하여 파일 선택 및 자동 압축)</span>
-                        </div>
-
-                        <label class="absolute inset-0 cursor-pointer z-10 flex items-center justify-center bg-neutral-950/0 hover:bg-neutral-950/5 transition">
-                            <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
-                        </label>
-                    </div>
-
-                    <!-- Image URL Input -->
-                    <div class="flex items-center gap-2">
-                        <span class="text-[11px] text-neutral-500 font-semibold whitespace-nowrap">사진 URL:</span>
-                        <input type="url" id="formImageUrl" oninput="updateImagePreviewFromUrl()" placeholder="https://example.com/image.jpg" 
-                               class="w-full px-3 py-1.5 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950">
-                    </div>
-
-                    <!-- Title & Summary -->
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block font-bold text-neutral-900 mb-1">제목 *</label>
-                            <input type="text" id="formTitle" required placeholder="예: 야채 계란말이" 
-                                   class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
-                        </div>
-
-                        <div>
-                            <label class="block font-bold text-neutral-900 mb-1">소개 / 간단 설명</label>
-                            <input type="text" id="formDescription" placeholder="예: 알록달록 기본 계란말이" 
-                                   class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
-                        </div>
-
-                        <div>
-                            <label class="block font-bold text-neutral-900 mb-1">태그 (쉼표로 구분)</label>
-                            <input type="text" id="formTags" placeholder="예: 한식, 반찬, 초간단" 
-                                   class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
-                        </div>
-                    </div>
-
-                    <!-- Dynamic Ingredients Entry Section -->
-                    <div class="pt-2 border-t border-neutral-100">
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="font-bold text-neutral-900">필요 재료 *</label>
-
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-[11px] text-neutral-500 font-medium">작성할 인분:</span>
-                                <select id="formServingSelector" onchange="switchFormServingTab(this.value)" class="px-2.5 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
-                                    <option value="1">1인분</option>
-                                    <option value="2">2인분</option>
-                                    <option value="3">3인분</option>
-                                    <option value="4">4인분</option>
-                                    <option value="5">5인분</option>
-                                    <option value="6">6인분 이상</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div id="ingredientInputBoxes">
-                            <!-- Dynamically generated textareas -->
-                        </div>
-                        <p class="text-[11px] text-neutral-400 mt-1">※ 재료는 줄바꿈(엔터)으로 구분하여 작성해주세요. (예: 계란 2개)</p>
-                    </div>
-
-                    <!-- Cooking Steps -->
-                    <div class="pt-2 border-t border-neutral-100">
-                        <label class="block font-bold text-neutral-900 mb-1">조리 순서 (줄바꿈 구분) *</label>
-                        <textarea id="formSteps" required rows="7" placeholder="1. 볼에 계란을 깨트린 뒤 소금을 넣고 잘 푼다.&#10;2. 다진 당근과 대파를 계란물에 섞는다.&#10;3. 팬에 기름을 두르고 조금씩 부어가며 익힌다." 
-                                  class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[160px]"></textarea>
-                    </div>
-
-                    <!-- Source Section -->
-                    <div class="pt-2 border-t border-neutral-100 space-y-3">
-                        <label class="block font-bold text-neutral-900">출처 정보 (선택 사항)</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <div>
-                                <input type="text" id="formSourcePlatform" placeholder="플랫폼 (예: 유튜브, 인스타그램, 블로그)" 
-                                       class="w-full px-3.5 py-2 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <input type="url" id="formSourceUrl" placeholder="URL 링크 (https://...)" 
-                                       class="w-full px-3.5 py-2 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Form Buttons -->
-                    <div class="pt-4 flex justify-end gap-2 border-t border-neutral-200 flex-shrink-0">
-                        <button type="button" onclick="closeFormModal()" class="px-5 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-900 font-semibold rounded text-xs transition">취소</button>
-                        <button type="submit" class="px-6 py-2.5 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold rounded text-xs transition">저장하기</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Firebase SDK & App Script Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -353,6 +354,26 @@
         }, (error) => {
             console.error("데이터 불러오기 실패:", error);
         });
+
+        // 페이지 전환 함수 (전체 페이지 관리)
+        window.showMainPage = function() {
+            document.getElementById('mainViewContainer').classList.remove('hidden');
+            document.getElementById('formViewContainer').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.showFormPage = function(editId = null) {
+            document.getElementById('mainViewContainer').classList.add('hidden');
+            document.getElementById('formViewContainer').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // 새로고침 버튼 동작 (화면 최상단 이동 및 렌더링 갱신)
+        window.triggerRefresh = function() {
+            renderTagCloud();
+            renderRecipes();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
 
         // 태그 필터 렌더링
         window.renderTagCloud = function() {
@@ -604,11 +625,11 @@
             const idToEdit = currentRecipeId;
             closeDetailModal();
             setTimeout(() => {
-                openFormModal(idToEdit);
+                openFormPage(idToEdit);
             }, 250);
         };
 
-        // 폼 모달 및 재료 입력 설정
+        // 작성/수정 페이지용 재료 입력 상자 설정
         window.setupFormIngredientsBox = function() {
             const container = document.getElementById('ingredientInputBoxes');
             const options = ['1', '2', '3', '4', '5', '6'];
@@ -617,7 +638,7 @@
                 <div id="formIngrBox_${opt}" class="${opt === '1' ? '' : 'hidden'}">
                     <textarea id="formIngredients_${opt}" rows="6" 
                               placeholder="${opt}인분 재료를 입력하세요 (줄바꿈 구분)&#10;예: 계란 2개&#10;소금 1꼬집" 
-                              class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[140px]"></textarea>
+                              class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[140px]"></textarea>
                 </div>
             `).join('');
         };
@@ -636,7 +657,7 @@
             });
         };
 
-        window.openFormModal = function(editId = null) {
+        window.openFormPage = function(editId = null) {
             document.getElementById('recipeForm').reset();
             setupFormIngredientsBox();
 
@@ -649,7 +670,7 @@
                 const r = recipes.find(item => item.id === editId);
                 if (!r) return;
 
-                document.getElementById('formModalTitle').textContent = '레시피 수정';
+                document.getElementById('formPageTitle').textContent = '레시피 수정';
                 document.getElementById('formRecipeId').value = r.id;
                 document.getElementById('formTitle').value = r.title;
                 document.getElementById('formDescription').value = r.description || '';
@@ -676,33 +697,16 @@
                     textPlaceholder.classList.remove('hidden');
                 }
             } else {
-                document.getElementById('formModalTitle').textContent = '레시피 작성';
+                document.getElementById('formPageTitle').textContent = '새 레시피 작성';
                 document.getElementById('formRecipeId').value = '';
                 preview.classList.add('hidden');
                 textPlaceholder.classList.remove('hidden');
             }
 
-            const modal = document.getElementById('recipeFormModal');
-            const card = document.getElementById('formModalCard');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                card.classList.remove('scale-95');
-            }, 10);
+            showFormPage();
         };
 
-        window.closeFormModal = function() {
-            document.getElementById('recipeFormModal');
-            const card = document.getElementById('formModalCard');
-            const modal = document.getElementById('recipeFormModal');
-            modal.classList.add('opacity-0');
-            card.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200);
-        };
-
-        // 이미지 파일 선택 시 자동 리사이징 & 압축 기능 추가
+        // 이미지 파일 선택 시 자동 리사이징 & 압축 기능
         window.handleImageUpload = function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -711,11 +715,10 @@
             reader.onload = function(evt) {
                 const img = new Image();
                 img.onload = function() {
-                    // Canvas를 이용해 800px 이하로 리사이즈 및 JPEG 70% 압축
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const max_size = 800; // 가로/세로 최대 크기 제한
+                    const max_size = 800;
 
                     if (width > height) {
                         if (width > max_size) {
@@ -734,7 +737,6 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // 0.7(70%) 화질로 압축된 base64 문자열 생성 (용량이 100KB 내외로 줄어듬)
                     const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
 
                     document.getElementById('formImageUrl').value = compressedDataUrl;
@@ -820,7 +822,7 @@
                     recipeData.createdAt = Date.now();
                     await addDoc(collection(db, "recipes"), recipeData);
                 }
-                closeFormModal();
+                showMainPage();
             } catch (err) {
                 console.error("저장 오류:", err);
                 alert("저장 중 오류가 발생했습니다: " + err.message);
