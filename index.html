@@ -4,136 +4,318 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>레시피 북</title>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    
     <style>
-        body { font-family: 'Pretendard', sans-serif; }
+        body {
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+            background-color: #ffffff;
+            color: #111111;
+        }
+
+        .card-hover {
+            transition: border-color 0.2s ease;
+        }
+        .card-hover:hover {
+            border-color: #111111;
+        }
+
+        .modal-backdrop {
+            transition: opacity 0.2s ease-in-out;
+        }
+        .modal-content {
+            transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+        }
+
+        /* Clean scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e5e5e5;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a3a3a3;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col justify-between bg-white text-neutral-900">
 
-    <!-- Header -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilter()">
-                <div class="bg-black text-white font-bold px-3 py-1.5 rounded text-lg">R</div>
-                <h1 class="text-xl font-bold tracking-tight">레시피 북</h1>
+    <!-- Header (Expanded for wide screens) -->
+    <header class="border-b border-neutral-200 bg-white sticky top-0 z-30 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="resetFilters()">
+                <div class="w-8 h-8 bg-neutral-950 text-white rounded flex items-center justify-center font-bold text-sm">
+                    R
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-neutral-950">레시피 북</h1>
             </div>
-            <button onclick="openModal()" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-1.5">
-                <span>+ 레시피 작성</span>
+
+            <button onclick="openFormModal()" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>레시피 작성</span>
             </button>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full">
-        <!-- Search & Filter Section -->
-        <div class="mb-8 space-y-4">
-            <div class="relative">
-                <input type="text" id="searchInput" placeholder="제목, 재료, 태그 검색..." oninput="filterRecipes()" 
-                    class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 pl-10 text-sm focus:outline-none focus:border-black transition">
-                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
+    <main class="max-w-7xl mx-auto px-6 py-8 flex-grow w-full">
+        
+        <!-- Search & Tag Filter Section -->
+        <section class="mb-8 space-y-3 w-full">
+            <!-- Search Bar -->
+            <div class="relative w-full">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="제목, 재료, 태그 검색..." 
+                       class="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950 transition">
             </div>
 
-            <!-- Tags Filter Box -->
-            <div class="bg-white border border-gray-200 rounded-xl p-4">
-                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-2">태그 필터 (중복 가능)</span>
-                <div id="tagFilterContainer" class="flex flex-wrap gap-2">
-                    <span class="text-sm text-gray-400">등록된 태그가 없습니다.</span>
+            <!-- Tags Filter Container -->
+            <div class="p-4 bg-neutral-100 rounded w-full">
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-xs font-bold text-neutral-800">
+                        태그 필터 (중복 가능)
+                    </span>
+                    <button id="clearFiltersBtn" onclick="clearTagFilters()" class="text-[11px] text-neutral-900 font-semibold underline hidden">
+                        초기화
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-1.5" id="tagCloud">
+                    <!-- Rendered dynamically by JS -->
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Recipe List Header -->
-        <div class="flex justify-between items-center mb-4">
-            <h2 id="recipeCountText" class="text-sm font-semibold text-gray-500">전체 목록 0개</h2>
-        </div>
+        <!-- Recipe List Grid -->
+        <section>
+            <div class="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2.5">
+                <span class="text-sm font-bold text-neutral-900 flex items-center gap-2">
+                    전체 목록 
+                    <span id="recipeCountBadge" class="text-xs font-normal text-neutral-500">0개</span>
+                </span>
+            </div>
 
-        <!-- Recipe Grid -->
-        <div id="recipeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Dynamic Recipes -->
-        </div>
+            <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Recipe Cards rendered here -->
+            </div>
 
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden bg-white border border-dashed border-gray-300 rounded-2xl p-12 text-center mt-4">
-            <p class="text-gray-500 text-sm mb-4">등록된 레시피가 없거나 검색 결과가 없습니다.</p>
-            <button onclick="resetFilter()" class="border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition">전체 목록 보기</button>
-        </div>
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 border border-dashed border-neutral-300 rounded">
+                <p class="text-xs font-medium text-neutral-500">등록된 레시피가 없거나 검색 결과가 없습니다.</p>
+                <button onclick="resetFilters()" class="mt-3 px-3.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold text-xs rounded transition border border-neutral-300">
+                    전체 목록 보기
+                </button>
+            </div>
+        </section>
     </main>
 
-    <!-- Recipe Modal (Add / Detail) -->
-    <div id="recipeModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl relative">
-            <div id="modalAddView">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-bold">새 레시피 작성</h3>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-black">&times;</button>
+    <!-- Footer -->
+    <footer class="py-6 text-center text-xs text-neutral-400 border-t border-neutral-200">
+        <p>Recipe Archive</p>
+    </footer>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- 1. DETAIL VIEW MODAL -->
+    <div id="recipeDetailModal" class="fixed inset-0 bg-neutral-950/40 z-50 flex items-center justify-center p-4 hidden opacity-0 modal-backdrop">
+        <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded border border-neutral-300 overflow-hidden flex flex-col scale-95 modal-content" id="detailModalCard">
+            
+            <div class="overflow-y-auto flex-grow text-xs leading-relaxed">
+                <!-- Header Image -->
+                <div class="relative w-full h-72 md:h-80 bg-neutral-100 border-b border-neutral-200">
+                    <img id="detailImage" src="" alt="" class="w-full h-full object-cover">
+                    <button onclick="closeDetailModal()" class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-neutral-900 w-8 h-8 rounded border border-neutral-200 flex items-center justify-center transition hover:bg-white">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                    </button>
                 </div>
-                <form id="recipeForm" onsubmit="saveRecipe(event)" class="space-y-4">
+
+                <!-- Text Details -->
+                <div class="p-6 space-y-6">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">레시피 제목</label>
-                        <input type="text" id="recipeTitle" required placeholder="예: 야채 계란말이" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black">
+                        <div class="flex items-center justify-between gap-3">
+                            <h2 id="detailTitle" class="text-xl md:text-2xl font-bold text-neutral-950 leading-snug"></h2>
+                            <span id="detailServingBadge" class="text-xs font-semibold text-neutral-600 bg-neutral-100 px-2.5 py-1 rounded border border-neutral-200 flex-shrink-0"></span>
+                        </div>
+                        <p id="detailDescription" class="text-xs md:text-sm text-neutral-600 mt-2 leading-relaxed"></p>
+                        <div id="detailTags" class="flex flex-wrap gap-2 mt-3"></div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">소요 시간 및 인분</label>
-                        <input type="text" id="recipeMeta" placeholder="예: 15분 · 2인분" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black">
+
+                    <!-- Ingredients with Serving Selector -->
+                    <div class="pt-4 border-t border-neutral-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-neutral-950 text-sm">필요 재료</h3>
+                            
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] text-neutral-500 font-medium">분량 선택:</span>
+                                <select id="detailServingSelect" onchange="changeDetailServing(this.value)" class="px-2.5 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
+                                </select>
+                            </div>
+                        </div>
+
+                        <ul id="detailIngredients" class="space-y-2 text-xs md:text-sm text-neutral-700 pl-1"></ul>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">사진 이미지 URL (선택)</label>
-                        <input type="url" id="recipeImage" placeholder="https://images.unsplash.com/..." class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black">
+
+                    <!-- Cooking Steps -->
+                    <div class="pt-4 border-t border-neutral-100">
+                        <h3 class="font-bold text-neutral-950 mb-3 text-sm">조리 순서</h3>
+                        <ol id="detailSteps" class="space-y-3 text-xs md:text-sm text-neutral-800 pl-1"></ol>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">간단 소개</label>
-                        <input type="text" id="recipeDesc" placeholder="예: 다진 당근과 파가 들어간 맛있는 계란말이" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black">
+
+                    <!-- Source Link Section -->
+                    <div id="detailSourceBox" class="pt-4 border-t border-neutral-100 hidden">
+                        <h3 class="font-bold text-neutral-950 mb-2 text-xs">출처 및 참고</h3>
+                        <div class="flex items-center gap-2 text-xs bg-neutral-50 p-3 rounded border border-neutral-200">
+                            <i class="fa-solid fa-link text-neutral-400"></i>
+                            <span id="detailSourcePlatform" class="font-bold text-neutral-800"></span>
+                            <span class="text-neutral-300">|</span>
+                            <a id="detailSourceUrl" href="#" target="_blank" rel="noopener noreferrer" class="text-neutral-950 underline hover:text-neutral-600 truncate flex-grow">
+                                바로가기 <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-0.5"></i>
+                            </a>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">태그 (쉼표로 구분)</label>
-                        <input type="text" id="recipeTags" placeholder="한식, 반찬, 초간단" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">재료 및 조리 순서</label>
-                        <textarea id="recipeContent" rows="5" required placeholder="재료: 계란 3개, 파...&#10;조리법: 1. 계란을 풀어줍니다..." class="w-full border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-black"></textarea>
-                    </div>
-                    <div class="flex justify-end space-x-2 pt-2">
-                        <button type="button" onclick="closeModal()" class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">취소</button>
-                        <button type="submit" class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800">저장하기</button>
-                    </div>
-                </form>
+                </div>
             </div>
 
-            <!-- Detail View inside Modal -->
-            <div id="modalDetailView" class="hidden space-y-4">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span id="detailMeta" class="text-xs text-gray-400 font-medium"></span>
-                        <h3 id="detailTitle" class="text-xl font-bold mt-1"></h3>
-                    </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-black text-xl">&times;</button>
-                </div>
-                <div id="detailImageContainer" class="rounded-xl overflow-hidden bg-gray-100 max-h-60">
-                    <img id="detailImage" src="" alt="" class="w-full h-full object-cover">
-                </div>
-                <div id="detailTags" class="flex flex-wrap gap-1.5"></div>
-                <p id="detailDesc" class="text-sm text-gray-600"></p>
-                <div class="border-t border-gray-100 pt-4">
-                    <h4 class="text-xs font-semibold text-gray-400 mb-2">상세 레시피 및 조리법</h4>
-                    <div id="detailContent" class="text-sm whitespace-pre-line bg-gray-50 p-4 rounded-xl leading-relaxed"></div>
-                </div>
-                <div class="flex justify-between pt-4 border-t border-gray-100">
-                    <button id="deleteBtn" onclick="" class="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition">삭제하기</button>
-                    <button onclick="closeModal()" class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium">닫기</button>
+            <!-- Footer Action Buttons -->
+            <div class="p-3 bg-neutral-50 border-t border-neutral-200 flex justify-between items-center">
+                <button onclick="deleteCurrentRecipe()" class="text-red-600 hover:text-red-800 text-xs font-semibold px-3 py-1.5 rounded hover:bg-red-50 transition">
+                    삭제
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeDetailModal()" class="px-4 py-1.5 bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-900 font-semibold text-xs rounded transition">닫기</button>
+                    <button onclick="editCurrentRecipe()" class="px-4 py-1.5 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold text-xs rounded transition">수정</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK & App Logic -->
+    <!-- 2. CREATE / EDIT FORM MODAL -->
+    <div id="recipeFormModal" class="fixed inset-0 bg-neutral-950/40 z-50 flex items-center justify-center p-4 hidden opacity-0 modal-backdrop">
+        <div class="bg-white w-full max-w-2xl max-h-[92vh] rounded border border-neutral-300 overflow-hidden flex flex-col scale-95 modal-content" id="formModalCard">
+            
+            <div class="px-6 py-4 border-b border-neutral-200 flex justify-between items-center bg-white flex-shrink-0">
+                <h3 id="formModalTitle" class="font-bold text-neutral-950 text-base">레시피 작성</h3>
+                <button onclick="closeFormModal()" class="text-neutral-400 hover:text-neutral-950 transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto flex-grow p-6">
+                <form id="recipeForm" onsubmit="handleFormSubmit(event)" class="text-xs flex flex-col space-y-5">
+                    <input type="hidden" id="formRecipeId">
+
+                    <!-- Image Upload Box -->
+                    <div class="relative w-full h-48 bg-neutral-50 border border-neutral-200 rounded flex flex-col items-center justify-center text-neutral-400 group overflow-hidden flex-shrink-0">
+                        <img id="formImagePreview" src="" class="absolute inset-0 w-full h-full object-cover hidden">
+                        
+                        <div id="imagePlaceholderText" class="flex flex-col items-center justify-center space-y-2 pointer-events-none z-10 text-center px-4">
+                            <i class="fa-solid fa-camera text-2xl text-neutral-400"></i>
+                            <span class="text-xs font-semibold text-neutral-600">이미지 첨부 (클릭하여 파일 선택)</span>
+                        </div>
+
+                        <label class="absolute inset-0 cursor-pointer z-10 flex items-center justify-center bg-neutral-950/0 hover:bg-neutral-950/5 transition">
+                            <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                        </label>
+                    </div>
+
+                    <!-- Image URL Input -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-neutral-500 font-semibold whitespace-nowrap">사진 URL:</span>
+                        <input type="url" id="formImageUrl" oninput="updateImagePreviewFromUrl()" placeholder="https://example.com/image.jpg" 
+                               class="w-full px-3 py-1.5 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950">
+                    </div>
+
+                    <!-- Title & Summary -->
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block font-bold text-neutral-900 mb-1">제목 *</label>
+                            <input type="text" id="formTitle" required placeholder="예: 야채 계란말이" 
+                                   class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-neutral-900 mb-1">소개 / 간단 설명</label>
+                            <input type="text" id="formDescription" placeholder="예: 알록달록 기본 계란말이" 
+                                   class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-neutral-900 mb-1">태그 (쉼표로 구분)</label>
+                            <input type="text" id="formTags" placeholder="예: 한식, 반찬, 초간단" 
+                                   class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Ingredients Entry Section -->
+                    <div class="pt-2 border-t border-neutral-100">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="font-bold text-neutral-900">필요 재료 *</label>
+
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[11px] text-neutral-500 font-medium">작성할 인분:</span>
+                                <select id="formServingSelector" onchange="switchFormServingTab(this.value)" class="px-2.5 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
+                                    <option value="1">1인분</option>
+                                    <option value="2">2인분</option>
+                                    <option value="3">3인분</option>
+                                    <option value="4">4인분</option>
+                                    <option value="5">5인분</option>
+                                    <option value="6">6인분 이상</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="ingredientInputBoxes">
+                            <!-- Dynamically generated textareas -->
+                        </div>
+                        <p class="text-[11px] text-neutral-400 mt-1">※ 재료는 줄바꿈(엔터)으로 구분하여 작성해주세요. (예: 계란 2개)</p>
+                    </div>
+
+                    <!-- Cooking Steps -->
+                    <div class="pt-2 border-t border-neutral-100">
+                        <label class="block font-bold text-neutral-900 mb-1">조리 순서 (줄바꿈 구분) *</label>
+                        <textarea id="formSteps" required rows="7" placeholder="1. 볼에 계란을 깨트린 뒤 소금을 넣고 잘 푼다.&#10;2. 다진 당근과 대파를 계란물에 섞는다.&#10;3. 팬에 기름을 두르고 조금씩 부어가며 익힌다." 
+                                  class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[160px]"></textarea>
+                    </div>
+
+                    <!-- Source Section -->
+                    <div class="pt-2 border-t border-neutral-100 space-y-3">
+                        <label class="block font-bold text-neutral-900">출처 정보 (선택 사항)</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <input type="text" id="formSourcePlatform" placeholder="플랫폼 (예: 유튜브, 인스타그램, 블로그)" 
+                                       class="w-full px-3.5 py-2 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <input type="url" id="formSourceUrl" placeholder="URL 링크 (https://...)" 
+                                       class="w-full px-3.5 py-2 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Buttons -->
+                    <div class="pt-4 flex justify-end gap-2 border-t border-neutral-200 flex-shrink-0">
+                        <button type="button" onclick="closeFormModal()" class="px-5 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-900 font-semibold rounded text-xs transition">취소</button>
+                        <button type="submit" class="px-6 py-2.5 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold rounded text-xs transition">저장하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & App Script Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // 사용자의 Firebase 설정 정보
         const firebaseConfig = {
@@ -145,197 +327,480 @@
           appId: "1:85558334227:web:c31c01aa0a18b8a21c40e6"
         };
 
-        // Initialize Firebase
+        // Firebase 초기화
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         let recipes = [];
         let selectedTags = new Set();
+        let currentRecipeId = null;
+        let activeDetailServing = '1';
 
-        // 실시간 데이터 동기화 (Firestore onSnapshot)
+        const FALLBACK_IMG = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=600&q=80';
+
+        // Firebase Firestore 실시간 연동 (onSnapshot)
         onSnapshot(collection(db, "recipes"), (snapshot) => {
             recipes = [];
             snapshot.forEach((docSnap) => {
                 recipes.push({ id: docSnap.id, ...docSnap.data() });
             });
-            render();
+            
+            // 생성일자 기준 정렬 (최신순)
+            recipes.sort((a, b) => (b.createdAt?.seconds || b.createdAt || 0) - (a.createdAt?.seconds || a.createdAt || 0));
+
+            renderTagCloud();
+            renderRecipes();
         }, (error) => {
             console.error("데이터 불러오기 실패:", error);
         });
 
-        // 렌더링 함수
-        window.render = function() {
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            const grid = document.getElementById('recipeGrid');
-            const emptyState = document.getElementById('emptyState');
-            const countText = document.getElementById('recipeCountText');
-
-            // 필터링 로직
-            const filtered = recipes.filter(r => {
-                const matchQuery = (r.title && r.title.toLowerCase().includes(searchQuery)) ||
-                                   (r.content && r.content.toLowerCase().includes(searchQuery)) ||
-                                   (r.tags && r.tags.some(t => t.toLowerCase().includes(searchQuery)));
-                
-                const matchTags = selectedTags.size === 0 || 
-                                  (r.tags && Array.from(selectedTags).every(t => r.tags.includes(t)));
-                
-                return matchQuery && matchTags;
+        // 태그 필터 렌더링
+        window.renderTagCloud = function() {
+            const tagMap = {};
+            recipes.forEach(r => {
+                (r.tags || []).forEach(t => {
+                    tagMap[t] = (tagMap[t] || 0) + 1;
+                });
             });
 
-            countText.innerText = `전체 목록 ${filtered.length}개`;
-            grid.innerHTML = '';
-
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
+            const tagCloud = document.getElementById('tagCloud');
+            const clearBtn = document.getElementById('clearFiltersBtn');
+            
+            if (selectedTags.size > 0) {
+                clearBtn.classList.remove('hidden');
             } else {
-                emptyState.classList.add('hidden');
-                filtered.forEach(r => {
-                    const card = document.createElement('div');
-                    card.className = 'bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition cursor-pointer flex flex-col';
-                    card.onclick = () => openDetail(r.id);
-
-                    const imgHtml = r.image ? `<div class="h-48 overflow-hidden bg-gray-100"><img src="${r.image}" class="w-full h-full object-cover"></div>` : '';
-                    
-                    const tagsHtml = r.tags ? r.tags.map(t => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md">#${t}</span>`).join(' ') : '';
-
-                    card.innerHTML = `
-                        ${imgHtml}
-                        <div class="p-5 flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-center text-xs text-gray-400 mb-1">
-                                    <span>${r.meta || ''}</span>
-                                </div>
-                                <h3 class="font-bold text-lg mb-2">${r.title}</h3>
-                                <p class="text-sm text-gray-600 line-clamp-2 mb-4">${r.desc || ''}</p>
-                            </div>
-                            <div class="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-gray-100">${tagsHtml}</div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
+                clearBtn.classList.add('hidden');
             }
 
-            renderTagCloud();
-        };
-
-        // 태그 클라우드 렌더링
-        function renderTagCloud() {
-            const container = document.getElementById('tagFilterContainer');
-            const tagCounts = {};
-            recipes.forEach(r => {
-                if (r.tags) {
-                    r.tags.forEach(t => {
-                        tagCounts[t] = (tagCounts[t] || 0) + 1;
-                    });
-                }
-            });
-
-            const tags = Object.keys(tagCounts);
+            const tags = Object.keys(tagMap).sort();
             if (tags.length === 0) {
-                container.innerHTML = '<span class="text-sm text-gray-400">등록된 태그가 없습니다.</span>';
+                tagCloud.innerHTML = `<span class="text-xs text-neutral-400">등록된 태그가 없습니다.</span>`;
                 return;
             }
 
-            container.innerHTML = '';
-            tags.forEach(t => {
-                const btn = document.createElement('button');
-                const isSelected = selectedTags.has(t);
-                btn.className = `text-xs px-3 py-1.5 rounded-lg font-medium transition ${isSelected ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`;
-                btn.innerText = `#${t} (${tagCounts[t]})`;
-                btn.onclick = () => {
-                    if (isSelected) selectedTags.delete(t);
-                    else selectedTags.add(t);
-                    render();
-                };
-                container.appendChild(btn);
+            tagCloud.innerHTML = tags.map(tag => {
+                const isSelected = selectedTags.has(tag);
+                return `
+                    <button onclick="toggleTag('${tag}')" 
+                            class="px-2.5 py-1 text-xs font-semibold rounded transition flex items-center gap-1 ${
+                                isSelected 
+                                ? 'bg-neutral-950 text-white' 
+                                : 'bg-white text-neutral-700 hover:bg-neutral-200 border border-neutral-200'
+                            }">
+                        <span>#${tag}</span>
+                        <span class="text-[10px] opacity-70">(${tagMap[tag]})</span>
+                    </button>
+                `;
+            }).join('');
+        };
+
+        window.toggleTag = function(tag) {
+            if (selectedTags.has(tag)) {
+                selectedTags.delete(tag);
+            } else {
+                selectedTags.add(tag);
+            }
+            renderTagCloud();
+            renderRecipes();
+        };
+
+        window.clearTagFilters = function() {
+            selectedTags.clear();
+            renderTagCloud();
+            renderRecipes();
+        };
+
+        window.resetFilters = function() {
+            document.getElementById('searchInput').value = '';
+            selectedTags.clear();
+            renderTagCloud();
+            renderRecipes();
+        };
+
+        window.handleSearch = function() {
+            renderRecipes();
+        };
+
+        // 카드 목록 렌더링
+        window.renderRecipes = function() {
+            const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+            const grid = document.getElementById('recipeGrid');
+            const emptyState = document.getElementById('emptyState');
+            const countBadge = document.getElementById('recipeCountBadge');
+
+            const filtered = recipes.filter(r => {
+                const titleMatch = (r.title || '').toLowerCase().includes(searchVal);
+                const descMatch = (r.description || '').toLowerCase().includes(searchVal);
+                const tagMatch = (r.tags || []).some(t => t.toLowerCase().includes(searchVal));
+                const matchesSearch = !searchVal || titleMatch || descMatch || tagMatch;
+
+                const matchesTags = selectedTags.size === 0 || Array.from(selectedTags).every(st => (r.tags || []).includes(st));
+
+                return matchesSearch && matchesTags;
             });
-        }
 
-        // 레시피 저장 (Firestore 추가)
-        window.saveRecipe = async function(e) {
-            e.preventDefault();
-            const title = document.getElementById('recipeTitle').value;
-            const meta = document.getElementById('recipeMeta').value;
-            const image = document.getElementById('recipeImage').value;
-            const desc = document.getElementById('recipeDesc').value;
-            const tagsInput = document.getElementById('recipeTags').value;
-            const content = document.getElementById('recipeContent').value;
+            countBadge.textContent = `${filtered.length}개`;
 
-            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim().replace(/^#/, '')).filter(t => t.length > 0) : [];
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
 
-            try {
-                await addDoc(collection(db, "recipes"), {
-                    title, meta, image, desc, tags, content, createdAt: serverTimestamp()
-                });
-                closeModal();
-                document.getElementById('recipeForm').reset();
-            } catch (err) {
-                console.error("저장 오류:", err);
-                alert("레시피 저장 중 오류가 발생했습니다.");
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(r => {
+                const sKeys = Object.keys(r.servingsMap || {}).filter(k => (r.servingsMap[k] || []).length > 0);
+                let servingLabel = '1인분';
+                if (sKeys.length > 0) {
+                    servingLabel = sKeys.map(k => k.includes('이상') ? k : `${k}인분`).join(' · ');
+                }
+
+                return `
+                <div onclick="openDetailModal('${r.id}')" 
+                     class="bg-white rounded overflow-hidden border border-neutral-200 card-hover cursor-pointer flex flex-col justify-between">
+                    <div>
+                        <div class="relative h-48 w-full bg-neutral-100 flex-shrink-0">
+                            <img src="${r.imageUrl || FALLBACK_IMG}" 
+                                 onerror="this.src='${FALLBACK_IMG}'" 
+                                 alt="${r.title}" 
+                                 class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="p-4">
+                            <div class="flex items-start justify-between gap-2">
+                                <h3 class="text-base font-bold text-neutral-950 leading-snug">
+                                    ${r.title}
+                                </h3>
+                                <span class="text-[11px] font-semibold text-neutral-600 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded flex-shrink-0">
+                                    ${servingLabel}
+                                </span>
+                            </div>
+
+                            ${r.description ? `<p class="text-xs text-neutral-500 mt-1.5 line-clamp-2 leading-relaxed">${r.description}</p>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 px-4 pb-4 pt-0">
+                        ${(r.tags || []).map(t => `
+                            <span class="text-xs text-neutral-400 font-medium">#${t}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            `}).join('');
+        };
+
+        // 상세 모달 열기
+        window.openDetailModal = function(id) {
+            const r = recipes.find(item => item.id === id);
+            if (!r) return;
+
+            currentRecipeId = id;
+
+            document.getElementById('detailImage').src = r.imageUrl || FALLBACK_IMG;
+            document.getElementById('detailTitle').textContent = r.title;
+            document.getElementById('detailDescription').textContent = r.description || '';
+
+            const tagsBox = document.getElementById('detailTags');
+            tagsBox.innerHTML = (r.tags || []).map(t => `
+                <span class="text-xs text-neutral-400 font-medium">#${t}</span>
+            `).join('');
+
+            const servingSelect = document.getElementById('detailServingSelect');
+            const servingsMap = r.servingsMap || {};
+            const availableServings = Object.keys(servingsMap).filter(k => (servingsMap[k] || []).length > 0);
+
+            if (availableServings.length > 0) {
+                servingSelect.innerHTML = availableServings.map(s => `
+                    <option value="${s}">${s.includes('이상') ? s : `${s}인분`}</option>
+                `).join('');
+                activeDetailServing = availableServings[0];
+            } else {
+                servingSelect.innerHTML = `<option value="1">1인분</option>`;
+                activeDetailServing = '1';
+            }
+
+            document.getElementById('detailServingBadge').textContent = availableServings.map(s => s.includes('이상') ? s : `${s}인분`).join(' · ') || '1인분';
+
+            renderDetailIngredients(r, activeDetailServing);
+
+            const stepsList = document.getElementById('detailSteps');
+            stepsList.innerHTML = (r.steps || []).map((step, idx) => `
+                <li class="flex items-start gap-2">
+                    <span class="font-bold text-neutral-950 flex-shrink-0">${idx + 1}.</span>
+                    <span class="leading-relaxed text-neutral-800">${step}</span>
+                </li>
+            `).join('');
+
+            const sourceBox = document.getElementById('detailSourceBox');
+            if (r.sourceUrl || r.sourcePlatform) {
+                sourceBox.classList.remove('hidden');
+                document.getElementById('detailSourcePlatform').textContent = r.sourcePlatform || '웹 출처';
+                const urlElem = document.getElementById('detailSourceUrl');
+                urlElem.href = r.sourceUrl || '#';
+                urlElem.textContent = r.sourceUrl ? r.sourceUrl : '링크 없음';
+            } else {
+                sourceBox.classList.add('hidden');
+            }
+
+            const modal = document.getElementById('recipeDetailModal');
+            const card = document.getElementById('detailModalCard');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                card.classList.remove('scale-95');
+            }, 10);
+        };
+
+        window.changeDetailServing = function(val) {
+            activeDetailServing = val;
+            const r = recipes.find(item => item.id === currentRecipeId);
+            if (r) {
+                renderDetailIngredients(r, val);
             }
         };
 
-        // 레시피 삭제 (Firestore 삭제)
-        window.deleteRecipe = async function(id) {
-            if (confirm("정말 이 레시피를 삭제하시겠습니까?")) {
+        function renderDetailIngredients(recipe, servingKey) {
+            const ingrList = document.getElementById('detailIngredients');
+            const items = (recipe.servingsMap && recipe.servingsMap[servingKey]) ? recipe.servingsMap[servingKey] : [];
+
+            if (items.length === 0) {
+                ingrList.innerHTML = `<li class="text-neutral-400 italic">등록된 재료 정보가 없습니다.</li>`;
+                return;
+            }
+
+            ingrList.innerHTML = items.map(item => `
+                <li class="flex items-center justify-between border-b border-neutral-100 pb-1">
+                    <span class="font-medium text-neutral-900">• ${item}</span>
+                </li>
+            `).join('');
+        }
+
+        window.closeDetailModal = function() {
+            const modal = document.getElementById('recipeDetailModal');
+            const card = document.getElementById('detailModalCard');
+            modal.classList.add('opacity-0');
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        };
+
+        // Firebase에서 데이터 삭제
+        window.deleteCurrentRecipe = async function() {
+            if (!currentRecipeId) return;
+            if (confirm('이 레시피를 삭제하시겠습니까?')) {
                 try {
-                    await deleteDoc(doc(db, "recipes", id));
-                    closeModal();
+                    await deleteDoc(doc(db, "recipes", currentRecipeId));
+                    closeDetailModal();
                 } catch (err) {
-                    console.error("삭제 오류:", err);
+                    console.error("삭제 실패:", err);
                     alert("삭제 중 오류가 발생했습니다.");
                 }
             }
         };
 
-        // 모달 제어
-        window.openModal = function() {
-            document.getElementById('modalAddView').classList.remove('hidden');
-            document.getElementById('modalDetailView').classList.add('hidden');
-            document.getElementById('recipeModal').classList.remove('hidden');
-            document.getElementById('recipeModal').classList.add('flex');
+        window.editCurrentRecipe = function() {
+            const idToEdit = currentRecipeId;
+            closeDetailModal();
+            setTimeout(() => {
+                openFormModal(idToEdit);
+            }, 250);
         };
 
-        window.openDetail = function(id) {
-            const r = recipes.find(item => item.id === id);
-            if (!r) return;
-
-            document.getElementById('modalAddView').classList.add('hidden');
-            document.getElementById('modalDetailView').classList.remove('hidden');
-
-            document.getElementById('detailTitle').innerText = r.title;
-            document.getElementById('detailMeta').innerText = r.meta || '';
-            document.getElementById('detailDesc').innerText = r.desc || '';
-            document.getElementById('detailContent').innerText = r.content || '';
+        // 폼 모달 및 재료 입력 설정
+        window.setupFormIngredientsBox = function() {
+            const container = document.getElementById('ingredientInputBoxes');
+            const options = ['1', '2', '3', '4', '5', '6'];
             
-            const imgContainer = document.getElementById('detailImageContainer');
-            const imgTag = document.getElementById('detailImage');
-            if (r.image) {
-                imgTag.src = r.image;
-                imgContainer.classList.remove('hidden');
+            container.innerHTML = options.map(opt => `
+                <div id="formIngrBox_${opt}" class="${opt === '1' ? '' : 'hidden'}">
+                    <textarea id="formIngredients_${opt}" rows="6" 
+                              placeholder="${opt}인분 재료를 입력하세요 (줄바꿈 구분)&#10;예: 계란 2개&#10;소금 1꼬집" 
+                              class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[140px]"></textarea>
+                </div>
+            `).join('');
+        };
+
+        window.switchFormServingTab = function(val) {
+            const options = ['1', '2', '3', '4', '5', '6'];
+            options.forEach(opt => {
+                const box = document.getElementById(`formIngrBox_${opt}`);
+                if (box) {
+                    if (opt === val) {
+                        box.classList.remove('hidden');
+                    } else {
+                        box.classList.add('hidden');
+                    }
+                }
+            });
+        };
+
+        window.openFormModal = function(editId = null) {
+            document.getElementById('recipeForm').reset();
+            setupFormIngredientsBox();
+
+            const preview = document.getElementById('formImagePreview');
+            const textPlaceholder = document.getElementById('imagePlaceholderText');
+            document.getElementById('formServingSelector').value = '1';
+            switchFormServingTab('1');
+
+            if (editId) {
+                const r = recipes.find(item => item.id === editId);
+                if (!r) return;
+
+                document.getElementById('formModalTitle').textContent = '레시피 수정';
+                document.getElementById('formRecipeId').value = r.id;
+                document.getElementById('formTitle').value = r.title;
+                document.getElementById('formDescription').value = r.description || '';
+                document.getElementById('formTags').value = (r.tags || []).join(', ');
+                document.getElementById('formImageUrl').value = r.imageUrl || '';
+                document.getElementById('formSteps').value = (r.steps || []).join('\n');
+                document.getElementById('formSourcePlatform').value = r.sourcePlatform || '';
+                document.getElementById('formSourceUrl').value = r.sourceUrl || '';
+
+                const servingsMap = r.servingsMap || {};
+                ['1', '2', '3', '4', '5', '6'].forEach(opt => {
+                    const textarea = document.getElementById(`formIngredients_${opt}`);
+                    if (textarea && servingsMap[opt]) {
+                        textarea.value = servingsMap[opt].join('\n');
+                    }
+                });
+
+                if (r.imageUrl) {
+                    preview.src = r.imageUrl;
+                    preview.classList.remove('hidden');
+                    textPlaceholder.classList.add('hidden');
+                } else {
+                    preview.classList.add('hidden');
+                    textPlaceholder.classList.remove('hidden');
+                }
             } else {
-                imgContainer.classList.add('hidden');
+                document.getElementById('formModalTitle').textContent = '레시피 작성';
+                document.getElementById('formRecipeId').value = '';
+                preview.classList.add('hidden');
+                textPlaceholder.classList.remove('hidden');
             }
 
-            const tagsContainer = document.getElementById('detailTags');
-            tagsContainer.innerHTML = r.tags ? r.tags.map(t => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md">#${t}</span>`).join(' ') : '';
-
-            document.getElementById('deleteBtn').setAttribute('onclick', `deleteRecipe('${r.id}')`);
-
-            document.getElementById('recipeModal').classList.remove('hidden');
-            document.getElementById('recipeModal').classList.add('flex');
+            const modal = document.getElementById('recipeFormModal');
+            const card = document.getElementById('formModalCard');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                card.classList.remove('scale-95');
+            }, 10);
         };
 
-        window.closeModal = function() {
-            document.getElementById('recipeModal').classList.remove('flex');
-            document.getElementById('recipeModal').classList.add('hidden');
+        window.closeFormModal = function() {
+            const modal = document.getElementById('recipeFormModal');
+            const card = document.getElementById('formModalCard');
+            modal.classList.add('opacity-0');
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
         };
 
-        window.resetFilter = function() {
-            document.getElementById('searchInput').value = '';
-            selectedTags.clear();
-            render();
+        window.handleImageUpload = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const dataUrl = evt.target.result;
+                    document.getElementById('formImageUrl').value = dataUrl;
+                    const preview = document.getElementById('formImagePreview');
+                    preview.src = dataUrl;
+                    preview.classList.remove('hidden');
+                    document.getElementById('imagePlaceholderText').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
         };
+
+        window.updateImagePreviewFromUrl = function() {
+            const url = document.getElementById('formImageUrl').value.trim();
+            const preview = document.getElementById('formImagePreview');
+            const textPlaceholder = document.getElementById('imagePlaceholderText');
+
+            if (url) {
+                preview.src = url;
+                preview.classList.remove('hidden');
+                textPlaceholder.classList.add('hidden');
+            } else {
+                preview.classList.add('hidden');
+                textPlaceholder.classList.remove('hidden');
+            }
+        };
+
+        // Firebase Firestore에 저장/수정
+        window.handleFormSubmit = async function(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('formRecipeId').value;
+            const title = document.getElementById('formTitle').value.trim();
+            const description = document.getElementById('formDescription').value.trim();
+            const rawTags = document.getElementById('formTags').value;
+            const imageUrl = document.getElementById('formImageUrl').value.trim();
+            const rawSteps = document.getElementById('formSteps').value;
+            const sourcePlatform = document.getElementById('formSourcePlatform').value.trim();
+            const sourceUrl = document.getElementById('formSourceUrl').value.trim();
+
+            const tags = rawTags.split(',')
+                .map(t => t.trim().replace(/^#/, ''))
+                .filter(t => t.length > 0);
+
+            const steps = rawSteps.split('\n')
+                .map(s => s.trim().replace(/^\d+[\.\)]\s*/, ''))
+                .filter(s => s.length > 0);
+
+            const servingsMap = {};
+            ['1', '2', '3', '4', '5', '6'].forEach(opt => {
+                const textarea = document.getElementById(`formIngredients_${opt}`);
+                if (textarea && textarea.value.trim()) {
+                    const items = textarea.value.split('\n')
+                        .map(i => i.trim())
+                        .filter(i => i.length > 0);
+                    if (items.length > 0) {
+                        servingsMap[opt] = items;
+                    }
+                }
+            });
+
+            if (Object.keys(servingsMap).length === 0) {
+                alert('최소 1개 인분에 대한 재료 정보를 입력해주세요.');
+                return;
+            }
+
+            const recipeData = {
+                title,
+                description,
+                tags,
+                imageUrl,
+                servingsMap,
+                steps,
+                sourcePlatform,
+                sourceUrl
+            };
+
+            try {
+                if (id) {
+                    // 수정
+                    await updateDoc(doc(db, "recipes", id), recipeData);
+                } else {
+                    // 새로 작성
+                    recipeData.createdAt = Date.now();
+                    await addDoc(collection(db, "recipes"), recipeData);
+                }
+                closeFormModal();
+            } catch (err) {
+                console.error("저장 오류:", err);
+                alert("저장 중 오류가 발생했습니다.");
+            }
+        };
+
+        // 초기화 실행
+        setupFormIngredientsBox();
     </script>
 </body>
 </html>
+```eof
