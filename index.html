@@ -123,6 +123,7 @@
 
     <!-- ================= VIEW 2: WRITE / EDIT FULL PAGE ================= -->
     <div id="formViewContainer" class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full hidden">
+        <!-- 타이틀을 입력 폼 박스와 동일한 가로 폭(max-w-3xl) 및 가운데 정렬로 일치시킴 -->
         <div class="max-w-3xl mx-auto mb-3">
             <h2 id="formPageTitle" class="text-base font-bold text-neutral-900">새 레시피 작성</h2>
         </div>
@@ -406,7 +407,8 @@
                 `;
                 renderDetailPageContent(id);
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // 이 코드를 추가하여 페이지가 바뀔 때마다 무조건 맨 위로 스크롤 이동
+            window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
         window.renderTagCloud = function() {
