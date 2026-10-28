@@ -48,7 +48,7 @@
     <!-- Header -->
     <header class="border-b border-neutral-200 bg-white sticky top-0 z-30 px-4 md:px-8 py-4">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer select-none" onclick="showMainPage(); resetFilters();">
+            <div class="flex items-center gap-3 cursor-pointer select-none" onclick="navigateTo('main'); resetFilters();">
                 <div class="w-8 h-8 bg-neutral-950 text-white rounded flex items-center justify-center font-bold text-sm">
                     R
                 </div>
@@ -56,7 +56,7 @@
             </div>
 
             <div id="headerRightArea" class="flex items-center gap-2">
-                <button onclick="openFormPage()" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2 active:scale-95">
+                <button onclick="navigateTo('form')" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2 active:scale-95">
                     <i class="fa-solid fa-plus text-[10px]"></i>
                     <span>레시피 작성</span>
                 </button>
@@ -114,23 +114,24 @@
         </section>
     </main>
 
-    <!-- ================= VIEW 2: WRITE / EDIT FULL PAGE ================= -->
-    <div id="formViewContainer" class="max-w-3xl mx-auto px-4 md:px-8 py-8 flex-grow w-full hidden">
-        <div class="flex items-center justify-between mb-6 pb-4">
-            <h2 id="formPageTitle" class="text-lg font-bold text-neutral-950">새 레시피 작성</h2>
+    <!-- ================= VIEW 2: WRITE / EDIT FULL PAGE (메인페이지와 좌표 위치 고정) ================= -->
+    <div id="formViewContainer" class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full hidden">
+        <!-- 타이틀 구분선 삭제 및 여백 축소 -->
+        <div class="mb-3">
+            <h2 id="formPageTitle" class="text-base font-bold text-neutral-900">새 레시피 작성</h2>
         </div>
 
-        <form id="recipeForm" onsubmit="handleFormSubmit(event)" class="text-xs flex flex-col space-y-6">
+        <form id="recipeForm" onsubmit="handleFormSubmit(event)" class="text-xs flex flex-col space-y-5 max-w-3xl mx-auto">
             <input type="hidden" id="formRecipeId">
 
             <!-- Image Upload Box -->
             <div>
-                <div class="relative w-full h-56 bg-neutral-50 border border-neutral-200 rounded flex flex-col items-center justify-center text-neutral-400 group overflow-hidden">
+                <div class="relative w-full h-72 bg-neutral-50 border border-neutral-200 rounded flex flex-col items-center justify-center text-neutral-400 group overflow-hidden">
                     <img id="formImagePreview" src="" class="absolute inset-0 w-full h-full object-cover hidden">
                     
                     <div id="imagePlaceholderText" class="flex flex-col items-center justify-center space-y-2 pointer-events-none z-10 text-center px-4">
-                        <i class="fa-solid fa-camera text-2xl text-neutral-400"></i>
-                        <span class="text-xs font-semibold text-neutral-600">이미지 첨부 (클릭하여 파일 선택 및 자동 압축)</span>
+                        <i class="fa-solid fa-camera text-3xl text-neutral-400"></i>
+                        <span class="text-xs font-semibold text-neutral-600">이미지 첨부</span>
                     </div>
 
                     <label class="absolute inset-0 cursor-pointer z-10 flex items-center justify-center bg-neutral-950/0 hover:bg-neutral-950/5 transition">
@@ -199,23 +200,23 @@
                 <p class="text-[11px] text-neutral-400 mt-1">※ 줄바꿈(엔터)으로 구분하여 작성해주세요.</p>
             </div>
 
-            <!-- Source Section -->
+            <!-- Source Section (아이콘 크기 2배 확대) -->
             <div class="pt-2 border-t border-neutral-100 space-y-3">
                 <label class="block font-bold text-neutral-900">출처 정보</label>
-                <div class="space-y-2">
+                <div class="space-y-3">
                     <!-- Platform Icon Selector -->
-                    <div class="flex items-center gap-3" id="platformSelector">
-                        <button type="button" onclick="setPlatform('인스타그램')" class="platform-btn w-10 h-10 rounded border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="인스타그램">
-                            <i class="fa-brands fa-instagram text-base text-pink-600"></i>
+                    <div class="flex items-center gap-4" id="platformSelector">
+                        <button type="button" onclick="setPlatform('인스타그램')" class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="인스타그램">
+                            <i class="fa-brands fa-instagram text-2xl text-pink-600"></i>
                         </button>
-                        <button type="button" onclick="setPlatform('유튜브')" class="platform-btn w-10 h-10 rounded border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="유튜브">
-                            <i class="fa-brands fa-youtube text-base text-red-600"></i>
+                        <button type="button" onclick="setPlatform('유튜브')" class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="유튜브">
+                            <i class="fa-brands fa-youtube text-2xl text-red-600"></i>
                         </button>
-                        <button type="button" onclick="setPlatform('네이버')" class="platform-btn w-10 h-10 rounded border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="네이버">
-                            <span class="font-bold text-xs text-green-600">N</span>
+                        <button type="button" onclick="setPlatform('네이버')" class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="네이버">
+                            <span class="font-black text-lg text-green-600">N</span>
                         </button>
-                        <button type="button" onclick="setPlatform('기타')" class="platform-btn w-10 h-10 rounded border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="기타">
-                            <i class="fa-solid fa-link text-xs text-neutral-600"></i>
+                        <button type="button" onclick="setPlatform('기타')" class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="기타">
+                            <i class="fa-solid fa-link text-base text-neutral-600"></i>
                         </button>
                     </div>
                     <input type="hidden" id="formSourcePlatform" value="">
@@ -228,24 +229,24 @@
 
             <!-- Form Buttons -->
             <div class="pt-6 flex justify-end gap-3">
-                <button type="button" onclick="showMainPage()" class="px-6 py-3 bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-900 font-semibold rounded text-xs transition">취소</button>
+                <button type="button" onclick="history.back()" class="px-6 py-3 bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-900 font-semibold rounded text-xs transition">취소</button>
                 <button type="submit" class="px-8 py-3 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold rounded text-xs transition">저장하기</button>
             </div>
         </form>
     </div>
 
     <!-- ================= VIEW 3: DETAIL FULL PAGE ================= -->
-    <div id="detailViewContainer" class="max-w-4xl mx-auto px-4 md:px-8 py-8 flex-grow w-full hidden">
+    <div id="detailViewContainer" class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full hidden">
         <!-- Detail Top Bar -->
-        <div class="flex items-center justify-between mb-6 pb-4">
-            <button onclick="showMainPage()" class="px-3.5 py-2 bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-900 font-semibold text-xs rounded transition flex items-center gap-1.5">
-                <i class="fa-solid fa-arrow-left"></i> 목록으로
+        <div class="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2.5">
+            <button onclick="history.back()" class="text-neutral-900 hover:text-black font-semibold text-sm transition">
+                ← 목록으로
             </button>
             <div class="flex items-center gap-2">
-                <button onclick="deleteCurrentRecipe()" class="px-3.5 py-2 text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 font-semibold text-xs rounded transition">
+                <button onclick="deleteCurrentRecipe()" class="text-red-600 hover:text-red-800 font-semibold text-sm transition">
                     삭제
                 </button>
-                <button onclick="editCurrentRecipe()" class="text-neutral-900 hover:text-black font-semibold text-xs px-2 py-1 transition underline">
+                <button onclick="editCurrentRecipe()" class="text-neutral-900 hover:text-black font-semibold text-sm transition underline">
                     수정
                 </button>
             </div>
@@ -259,47 +260,43 @@
             </div>
 
             <!-- Text Content Details -->
-            <div class="p-6 md:p-8 space-y-8">
+            <div class="p-6 md:p-8 space-y-6">
                 <div>
                     <div class="flex items-start justify-between gap-4">
                         <h2 id="detailTitle" class="text-2xl md:text-3xl font-bold text-neutral-950 leading-snug"></h2>
                         <span id="detailServingBadge" class="text-xs font-semibold text-neutral-600 bg-neutral-100 px-3 py-1.5 rounded border border-neutral-200 flex-shrink-0"></span>
                     </div>
-                    <p id="detailDescription" class="text-xs md:text-sm text-neutral-600 mt-3 leading-relaxed"></p>
-                    <div id="detailTags" class="flex flex-wrap gap-2 mt-4"></div>
+                    <p id="detailDescription" class="text-xs md:text-sm text-neutral-600 mt-2 leading-relaxed"></p>
+                    <div id="detailTags" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
 
                 <!-- Ingredients with Serving Selector -->
-                <div class="pt-6 border-t border-neutral-100">
-                    <div class="flex items-center justify-between mb-4">
+                <div class="pt-4 border-t border-neutral-100">
+                    <div class="flex items-center justify-between mb-2.5">
                         <h3 class="font-bold text-neutral-950 text-sm md:text-base">필요 재료</h3>
                         
                         <div class="flex items-center gap-2">
                             <span class="text-[11px] text-neutral-500 font-medium">분량 선택:</span>
-                            <select id="detailServingSelect" onchange="changeDetailServing(this.value)" class="px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
+                            <select id="detailServingSelect" onchange="changeDetailServing(this.value)" class="px-3 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
                             </select>
                         </div>
                     </div>
 
-                    <ul id="detailIngredients" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm md:text-base text-neutral-700"></ul>
+                    <ul id="detailIngredients" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm md:text-base text-neutral-700"></ul>
                 </div>
 
                 <!-- Cooking Steps -->
-                <div class="pt-6 border-t border-neutral-100">
-                    <h3 class="font-bold text-neutral-950 mb-4 text-sm md:text-base">조리 순서</h3>
-                    <ol id="detailSteps" class="space-y-3 text-sm md:text-base text-neutral-800"></ol>
+                <div class="pt-4 border-t border-neutral-100">
+                    <h3 class="font-bold text-neutral-950 mb-2.5 text-sm md:text-base">조리 순서</h3>
+                    <ol id="detailSteps" class="space-y-1.5 text-sm md:text-base text-neutral-800"></ol>
                 </div>
 
-                <!-- Source Link Section -->
-                <div id="detailSourceBox" class="pt-6 border-t border-neutral-100 hidden">
-                    <h3 class="font-bold text-neutral-950 mb-2 text-xs">출처</h3>
-                    <div class="flex items-center gap-2 text-xs bg-neutral-50 p-3.5 rounded border border-neutral-200">
-                        <span id="detailSourceIcon"></span>
-                        <span id="detailSourcePlatform" class="font-bold text-neutral-800"></span>
-                        <span class="text-neutral-300">|</span>
-                        <a id="detailSourceUrl" href="#" target="_blank" rel="noopener noreferrer" class="text-neutral-950 underline hover:text-neutral-600 truncate flex-grow">
-                            바로가기 <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-0.5"></i>
-                        </a>
+                <!-- Source Link Section (흰색 박스/테두리 제거, 아이콘 확대, URL 형식 출력) -->
+                <div id="detailSourceBox" class="pt-4 border-t border-neutral-100 hidden">
+                    <h3 class="font-bold text-neutral-950 mb-2 text-sm">출처</h3>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span id="detailSourceIcon" class="flex items-center justify-center flex-shrink-0"></span>
+                        <a id="detailSourceUrl" href="#" target="_blank" rel="noopener noreferrer" class="text-neutral-950 underline hover:text-neutral-600 truncate flex-grow text-xs font-medium"></a>
                     </div>
                 </div>
             </div>
@@ -335,6 +332,7 @@
 
         const FALLBACK_IMG = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=600&q=80';
 
+        // Firebase Firestore 실시간 연동
         onSnapshot(collection(db, "recipes"), (snapshot) => {
             recipes = [];
             snapshot.forEach((docSnap) => {
@@ -347,45 +345,63 @@
             renderRecipes();
 
             if (currentRecipeId && !document.getElementById('detailViewContainer').classList.contains('hidden')) {
-                showDetailPage(currentRecipeId);
+                renderDetailPageContent(currentRecipeId);
             }
         }, (error) => {
             console.error("데이터 불러오기 실패:", error);
         });
 
-        window.showMainPage = function() {
-            document.getElementById('mainViewContainer').classList.remove('hidden');
-            document.getElementById('formViewContainer').classList.add('hidden');
-            document.getElementById('detailViewContainer').classList.add('hidden');
-            document.getElementById('headerRightArea').innerHTML = `
-                <button onclick="openFormPage()" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2 active:scale-95">
-                    <i class="fa-solid fa-plus text-[10px]"></i>
-                    <span>레시피 작성</span>
-                </button>
-            `;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // ================= ROUTING & HISTORY (뒤로가기 지원) =================
+        window.navigateTo = function(view, id = null, pushState = true) {
+            if (pushState) {
+                const state = { view, id };
+                let url = '#main';
+                if (view === 'detail' && id) url = `#detail?id=${id}`;
+                if (view === 'form') url = `#form${id ? `?edit=${id}` : ''}`;
+                history.pushState(state, '', url);
+            }
+            renderView(view, id);
         };
 
-        window.showFormPage = function() {
-            document.getElementById('mainViewContainer').classList.add('hidden');
-            document.getElementById('formViewContainer').classList.remove('hidden');
-            document.getElementById('detailViewContainer').classList.add('hidden');
-            document.getElementById('headerRightArea').innerHTML = '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
+        window.addEventListener('popstate', (e) => {
+            if (e.state) {
+                renderView(e.state.view, e.state.id);
+            } else {
+                renderView('main');
+            }
+        });
 
-        window.showDetailPageView = function() {
+        function renderView(view, id = null) {
             document.getElementById('mainViewContainer').classList.add('hidden');
             document.getElementById('formViewContainer').classList.add('hidden');
-            document.getElementById('detailViewContainer').classList.remove('hidden');
-            document.getElementById('headerRightArea').innerHTML = `
-                <button onclick="openFormPage()" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2 active:scale-95">
-                    <i class="fa-solid fa-plus text-[10px]"></i>
-                    <span>레시피 작성</span>
-                </button>
-            `;
+            document.getElementById('detailViewContainer').classList.add('hidden');
+
+            const headerRight = document.getElementById('headerRightArea');
+
+            if (view === 'main') {
+                document.getElementById('mainViewContainer').classList.remove('hidden');
+                headerRight.innerHTML = `
+                    <button onclick="navigateTo('form')" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-plus text-[10px]"></i>
+                        <span>레시피 작성</span>
+                    </button>
+                `;
+            } else if (view === 'form') {
+                document.getElementById('formViewContainer').classList.remove('hidden');
+                headerRight.innerHTML = '';
+                setupFormPage(id);
+            } else if (view === 'detail' && id) {
+                document.getElementById('detailViewContainer').classList.remove('hidden');
+                headerRight.innerHTML = `
+                    <button onclick="navigateTo('form')" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-plus text-[10px]"></i>
+                        <span>레시피 작성</span>
+                    </button>
+                `;
+                renderDetailPageContent(id);
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
+        }
 
         window.renderTagCloud = function() {
             const tagMap = {};
@@ -488,7 +504,7 @@
                 }
 
                 return `
-                <div onclick="showDetailPage('${r.id}')" 
+                <div onclick="navigateTo('detail', '${r.id}')" 
                      class="bg-white rounded overflow-hidden border border-neutral-200 card-hover cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="relative h-48 w-full bg-neutral-100 flex-shrink-0">
@@ -521,7 +537,7 @@
             `}).join('');
         };
 
-        window.showDetailPage = function(id) {
+        function renderDetailPageContent(id) {
             const r = recipes.find(item => item.id === id);
             if (!r) return;
 
@@ -556,36 +572,35 @@
 
             const stepsList = document.getElementById('detailSteps');
             stepsList.innerHTML = (r.steps || []).map((step, idx) => `
-                <li class="flex items-baseline gap-3 py-1">
-                    <strong class="font-bold text-neutral-900">${idx + 1}.</strong>
+                <li class="flex items-baseline gap-2 py-0.5">
+                    <strong class="font-bold text-neutral-900 flex-shrink-0">${idx + 1}</strong>
                     <span class="leading-relaxed text-neutral-800">${step}</span>
                 </li>
             `).join('');
 
+            // 출처 섹션 (투명 배경, 박스/테두리 삭제, 아이콘 자체 확대, URL 주소 직접 표시)
             const sourceBox = document.getElementById('detailSourceBox');
             if (r.sourceUrl || r.sourcePlatform) {
                 sourceBox.classList.remove('hidden');
-                document.getElementById('detailSourcePlatform').textContent = r.sourcePlatform || '웹 출처';
                 
-                let iconHtml = '<i class="fa-solid fa-link text-neutral-400"></i>';
+                let iconHtml = '<i class="fa-solid fa-link text-neutral-600 text-base"></i>';
                 if (r.sourcePlatform === '인스타그램') {
-                    iconHtml = '<i class="fa-brands fa-instagram text-pink-600"></i>';
+                    iconHtml = '<i class="fa-brands fa-instagram text-pink-600 text-xl"></i>';
                 } else if (r.sourcePlatform === '유튜브') {
-                    iconHtml = '<i class="fa-brands fa-youtube text-red-600"></i>';
+                    iconHtml = '<i class="fa-brands fa-youtube text-red-600 text-xl"></i>';
                 } else if (r.sourcePlatform === '네이버') {
-                    iconHtml = '<span class="font-bold text-xs text-green-600">N</span>';
+                    iconHtml = '<span class="font-black text-xl text-green-600">N</span>';
                 }
                 document.getElementById('detailSourceIcon').innerHTML = iconHtml;
 
                 const urlElem = document.getElementById('detailSourceUrl');
-                urlElem.href = r.sourceUrl || '#';
-                urlElem.textContent = r.sourceUrl ? r.sourceUrl : '링크 없음';
+                const targetUrl = r.sourceUrl || '#';
+                urlElem.href = targetUrl;
+                urlElem.textContent = targetUrl;
             } else {
                 sourceBox.classList.add('hidden');
             }
-
-            showDetailPageView();
-        };
+        }
 
         window.changeDetailServing = function(val) {
             activeDetailServing = val;
@@ -600,12 +615,12 @@
             const items = (recipe.servingsMap && recipe.servingsMap[servingKey]) ? recipe.servingsMap[servingKey] : [];
 
             if (items.length === 0) {
-                ingrList.innerHTML = `<li class="text-neutral-400 italic py-2">등록된 재료 정보가 없습니다.</li>`;
+                ingrList.innerHTML = `<li class="text-neutral-400 italic py-1">등록된 재료 정보가 없습니다.</li>`;
                 return;
             }
 
             ingrList.innerHTML = items.map(item => `
-                <li class="flex items-center justify-between pb-2 pt-1 px-1">
+                <li class="flex items-center justify-between py-0.5 px-1">
                     <span class="font-medium text-neutral-900">• ${item}</span>
                 </li>
             `).join('');
@@ -616,7 +631,7 @@
             if (confirm('이 레시피를 삭제하시겠습니까?')) {
                 try {
                     await deleteDoc(doc(db, "recipes", currentRecipeId));
-                    showMainPage();
+                    navigateTo('main');
                 } catch (err) {
                     console.error("삭제 실패:", err);
                     alert("삭제 중 오류가 발생했습니다.");
@@ -625,7 +640,7 @@
         };
 
         window.editCurrentRecipe = function() {
-            openFormPage(currentRecipeId);
+            navigateTo('form', currentRecipeId);
         };
 
         window.setupFormIngredientsBox = function() {
@@ -659,16 +674,16 @@
             document.getElementById('formSourcePlatform').value = platformName;
             const buttons = document.querySelectorAll('.platform-btn');
             buttons.forEach(btn => {
-                btn.classList.remove('border-neutral-950', 'bg-neutral-50');
+                btn.classList.remove('border-neutral-950', 'bg-neutral-100');
             });
-            event.currentTarget.classList.add('border-neutral-950', 'bg-neutral-50');
+            event.currentTarget.classList.add('border-neutral-950', 'bg-neutral-100');
         };
 
-        window.openFormPage = function(editId = null) {
+        function setupFormPage(editId = null) {
             document.getElementById('recipeForm').reset();
             setupFormIngredientsBox();
             document.getElementById('formSourcePlatform').value = '';
-            document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('border-neutral-950', 'bg-neutral-50'));
+            document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('border-neutral-950', 'bg-neutral-100'));
 
             const preview = document.getElementById('formImagePreview');
             const textPlaceholder = document.getElementById('imagePlaceholderText');
@@ -692,7 +707,7 @@
                 if (r.sourcePlatform) {
                     document.querySelectorAll('.platform-btn').forEach(btn => {
                         if (btn.getAttribute('onclick').includes(r.sourcePlatform)) {
-                            btn.classList.add('border-neutral-950', 'bg-neutral-50');
+                            btn.classList.add('border-neutral-950', 'bg-neutral-100');
                         }
                     });
                 }
@@ -719,9 +734,7 @@
                 preview.classList.add('hidden');
                 textPlaceholder.classList.remove('hidden');
             }
-
-            showFormPage();
-        };
+        }
 
         window.handleImageUpload = function(e) {
             const file = e.target.files[0];
@@ -833,17 +846,36 @@
             try {
                 if (id) {
                     await updateDoc(doc(db, "recipes", id), recipeData);
-                    showDetailPage(id);
+                    navigateTo('detail', id, false);
                 } else {
                     recipeData.createdAt = Date.now();
                     const docRef = await addDoc(collection(db, "recipes"), recipeData);
-                    showDetailPage(docRef.id);
+                    navigateTo('detail', docRef.id, false);
                 }
             } catch (err) {
                 console.error("저장 오류:", err);
                 alert("저장 중 오류가 발생했습니다: " + err.message);
             }
         };
+
+        // 초기 히스토리 상태 설정 및 실행
+        if (!location.hash) {
+            history.replaceState({ view: 'main' }, '', '#main');
+        } else {
+            const hash = location.hash;
+            if (hash.startsWith('#detail')) {
+                const urlParams = new URLSearchParams(hash.split('?')[1]);
+                const id = urlParams.get('id');
+                if (id) renderView('detail', id);
+                else renderView('main');
+            } else if (hash.startsWith('#form')) {
+                const urlParams = new URLSearchParams(hash.split('?')[1]);
+                const id = urlParams.get('edit');
+                renderView('form', id);
+            } else {
+                renderView('main');
+            }
+        }
 
         setupFormIngredientsBox();
     </script>
