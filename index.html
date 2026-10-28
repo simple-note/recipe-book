@@ -68,11 +68,18 @@
     <main id="mainViewContainer" class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full">
         <!-- Search & Tag Filter Section -->
         <section class="mb-8 space-y-3 w-full">
-            <!-- Search Bar -->
-            <div class="relative w-full">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs"></i>
-                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="제목, 재료, 태그 검색" 
-                       class="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950 transition">
+            <!-- Search Bar with Filter Dropdown (제목 - 재료 - 설명 순서) -->
+            <div class="flex gap-2 w-full">
+                <select id="searchFilterType" onchange="handleSearch()" class="px-3 py-2.5 bg-white border border-neutral-200 rounded text-xs font-semibold focus:outline-none focus:border-neutral-950 cursor-pointer flex-shrink-0">
+                    <option value="title" selected>제목</option>
+                    <option value="ingredient">재료</option>
+                    <option value="description">설명</option>
+                </select>
+                <div class="relative flex-grow">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="검색어를 입력하세요..." 
+                           class="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950 transition">
+                </div>
             </div>
 
             <!-- Tags Filter Container -->
@@ -114,10 +121,9 @@
         </section>
     </main>
 
-    <!-- ================= VIEW 2: WRITE / EDIT FULL PAGE (메인페이지와 좌표 위치 고정) ================= -->
+    <!-- ================= VIEW 2: WRITE / EDIT FULL PAGE ================= -->
     <div id="formViewContainer" class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full hidden">
-        <!-- 타이틀 구분선 삭제 및 여백 축소 -->
-        <div class="mb-3">
+        <div class="max-w-3xl mx-auto mb-3">
             <h2 id="formPageTitle" class="text-base font-bold text-neutral-900">새 레시피 작성</h2>
         </div>
 
@@ -151,19 +157,19 @@
             <div class="space-y-4">
                 <div>
                     <label class="block font-bold text-neutral-900 mb-1">제목 <span class="text-red-500">*</span></label>
-                    <input type="text" id="formTitle" required placeholder="예: 야채 계란말이" 
+                    <input type="text" id="formTitle" required placeholder="계란말이" 
                            class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
                 </div>
 
                 <div>
                     <label class="block font-bold text-neutral-900 mb-1">설명</label>
-                    <input type="text" id="formDescription" placeholder="예: 알록달록 기본 계란말이" 
+                    <input type="text" id="formDescription" placeholder="야채 계란말이" 
                            class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
                 </div>
 
                 <div>
                     <label class="block font-bold text-neutral-900 mb-1">태그 (쉼표로 구분)</label>
-                    <input type="text" id="formTags" placeholder="예: 한식, 반찬, 초간단" 
+                    <input type="text" id="formTags" placeholder="한식, 반찬, 초간단" 
                            class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
                 </div>
             </div>
@@ -171,7 +177,7 @@
             <!-- Dynamic Ingredients Entry Section -->
             <div class="pt-2 border-t border-neutral-100">
                 <div class="flex items-center justify-between mb-2">
-                    <label class="font-bold text-neutral-900">필요 재료 <span class="text-red-500">*</span></label>
+                    <label class="font-bold text-neutral-900">재료 <span class="text-red-500">*</span></label>
 
                     <div class="flex items-center gap-1.5">
                         <span class="text-[11px] text-neutral-500 font-medium">작성할 인분:</span>
@@ -200,9 +206,9 @@
                 <p class="text-[11px] text-neutral-400 mt-1">※ 줄바꿈(엔터)으로 구분하여 작성해주세요.</p>
             </div>
 
-            <!-- Source Section (아이콘 크기 2배 확대) -->
+            <!-- Source Section -->
             <div class="pt-2 border-t border-neutral-100 space-y-3">
-                <label class="block font-bold text-neutral-900">출처 정보</label>
+                <label class="block font-bold text-neutral-900">출처</label>
                 <div class="space-y-3">
                     <!-- Platform Icon Selector -->
                     <div class="flex items-center gap-4" id="platformSelector">
@@ -273,7 +279,7 @@
                 <!-- Ingredients with Serving Selector -->
                 <div class="pt-4 border-t border-neutral-100">
                     <div class="flex items-center justify-between mb-2.5">
-                        <h3 class="font-bold text-neutral-950 text-sm md:text-base">필요 재료</h3>
+                        <h3 class="font-bold text-neutral-950 text-sm md:text-base">재료</h3>
                         
                         <div class="flex items-center gap-2">
                             <span class="text-[11px] text-neutral-500 font-medium">분량 선택:</span>
@@ -291,7 +297,7 @@
                     <ol id="detailSteps" class="space-y-1.5 text-sm md:text-base text-neutral-800"></ol>
                 </div>
 
-                <!-- Source Link Section (흰색 박스/테두리 제거, 아이콘 확대, URL 형식 출력) -->
+                <!-- Source Link Section -->
                 <div id="detailSourceBox" class="pt-4 border-t border-neutral-100 hidden">
                     <h3 class="font-bold text-neutral-950 mb-2 text-sm">출처</h3>
                     <div class="flex items-center gap-3 text-xs">
@@ -460,6 +466,7 @@
 
         window.resetFilters = function() {
             document.getElementById('searchInput').value = '';
+            document.getElementById('searchFilterType').value = 'title';
             selectedTags.clear();
             renderTagCloud();
             renderRecipes();
@@ -471,15 +478,35 @@
 
         window.renderRecipes = function() {
             const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+            const filterType = document.getElementById('searchFilterType').value;
             const grid = document.getElementById('recipeGrid');
             const emptyState = document.getElementById('emptyState');
             const countBadge = document.getElementById('recipeCountBadge');
 
             const filtered = recipes.filter(r => {
-                const titleMatch = (r.title || '').toLowerCase().includes(searchVal);
-                const descMatch = (r.description || '').toLowerCase().includes(searchVal);
-                const tagMatch = (r.tags || []).some(t => t.toLowerCase().includes(searchVal));
-                const matchesSearch = !searchVal || titleMatch || descMatch || tagMatch;
+                const titleText = (r.title || '').toLowerCase();
+                const descText = (r.description || '').toLowerCase();
+                const descCombinedText = descText + ' ' + titleText;
+
+                let ingredientText = titleText;
+                if (r.servingsMap) {
+                    Object.values(r.servingsMap).forEach(arr => {
+                        if (Array.isArray(arr)) {
+                            ingredientText += ' ' + arr.join(' ').toLowerCase();
+                        }
+                    });
+                }
+
+                let matchesSearch = true;
+                if (searchVal) {
+                    if (filterType === 'title') {
+                        matchesSearch = titleText.includes(searchVal);
+                    } else if (filterType === 'ingredient') {
+                        matchesSearch = ingredientText.includes(searchVal);
+                    } else if (filterType === 'description') {
+                        matchesSearch = descCombinedText.includes(searchVal);
+                    }
+                }
 
                 const matchesTags = selectedTags.size === 0 || Array.from(selectedTags).every(st => (r.tags || []).includes(st));
 
@@ -578,7 +605,6 @@
                 </li>
             `).join('');
 
-            // 출처 섹션 (투명 배경, 박스/테두리 삭제, 아이콘 자체 확대, URL 주소 직접 표시)
             const sourceBox = document.getElementById('detailSourceBox');
             if (r.sourceUrl || r.sourcePlatform) {
                 sourceBox.classList.remove('hidden');
@@ -650,7 +676,7 @@
             container.innerHTML = options.map(opt => `
                 <div id="formIngrBox_${opt}" class="${opt === '1' ? '' : 'hidden'}">
                     <textarea id="formIngredients_${opt}" rows="6" 
-                              placeholder="${opt}인분 재료를 입력하세요 (줄바꿈 구분)&#10;예: 계란 2개&#10;소금 1꼬집" 
+                              placeholder="${opt}인분 재료를 입력하세요.&#10;계란 2개&#10;소금 1꼬집" 
                               class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[140px]"></textarea>
                 </div>
             `).join('');
