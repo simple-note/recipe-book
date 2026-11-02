@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,9 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Pretendard Font -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-    
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+
     <style>
         body {
             font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
@@ -21,6 +23,7 @@
         .card-hover {
             transition: border-color 0.2s ease, transform 0.2s ease;
         }
+
         .card-hover:hover {
             border-color: #111111;
             transform: translateY(-2px);
@@ -31,32 +34,39 @@
             width: 6px;
             height: 6px;
         }
+
         ::-webkit-scrollbar-track {
             background: #ffffff;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #e5e5e5;
             border-radius: 3px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #a3a3a3;
         }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col justify-between bg-white text-neutral-900">
 
     <!-- Header -->
     <header class="border-b border-neutral-200 bg-white sticky top-0 z-30 px-4 md:px-8 py-4">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer select-none" onclick="navigateTo('main'); resetFilters();">
-                <div class="w-8 h-8 bg-neutral-950 text-white rounded flex items-center justify-center font-bold text-sm">
+            <div class="flex items-center gap-3 cursor-pointer select-none"
+                onclick="navigateTo('main'); resetFilters();">
+                <div
+                    class="w-8 h-8 bg-neutral-950 text-white rounded flex items-center justify-center font-bold text-sm">
                     R
                 </div>
                 <h1 class="text-xl font-bold tracking-tight text-neutral-950">레시피 북</h1>
             </div>
 
             <div id="headerRightArea" class="flex items-center gap-2">
-                <button onclick="navigateTo('form')" class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2 active:scale-95">
+                <button onclick="navigateTo('form')"
+                    class="bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded transition flex items-center gap-2 active:scale-95">
                     <i class="fa-solid fa-plus text-[10px]"></i>
                     <span>레시피 작성</span>
                 </button>
@@ -68,33 +78,32 @@
     <main id="mainViewContainer" class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full">
         <!-- Search & Tag Filter Section -->
         <section class="mb-8 space-y-3 w-full">
-            <!-- Search Bar with Filter Dropdown (제목 - 재료 - 설명 순서) -->
             <div class="flex gap-2 w-full">
-                <select id="searchFilterType" onchange="handleSearch()" class="px-3 py-2.5 bg-white border border-neutral-200 rounded text-xs font-semibold focus:outline-none focus:border-neutral-950 cursor-pointer flex-shrink-0">
+                <select id="searchFilterType" onchange="handleSearch()"
+                    class="px-3 py-2.5 bg-white border border-neutral-200 rounded text-xs font-semibold focus:outline-none focus:border-neutral-950 cursor-pointer flex-shrink-0">
                     <option value="title" selected>제목</option>
                     <option value="ingredient">재료</option>
                     <option value="description">설명</option>
                 </select>
                 <div class="relative flex-grow">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="검색어를 입력하세요..." 
-                           class="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950 transition">
+                    <i
+                        class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="검색어를 입력하세요."
+                        class="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950 transition">
                 </div>
             </div>
 
-            <!-- Tags Filter Container -->
             <div class="p-4 bg-neutral-50 border border-neutral-100 rounded w-full">
                 <div class="flex items-center justify-between mb-2.5">
                     <span class="text-xs font-bold text-neutral-800">
                         태그 필터
                     </span>
-                    <button id="clearFiltersBtn" onclick="clearTagFilters()" class="text-[11px] text-neutral-900 font-semibold underline hidden">
+                    <button id="clearFiltersBtn" onclick="clearTagFilters()"
+                        class="text-[11px] text-neutral-900 font-semibold underline hidden">
                         초기화
                     </button>
                 </div>
-                <div class="flex flex-wrap gap-1.5" id="tagCloud">
-                    <!-- Dynamic Tag List -->
-                </div>
+                <div class="flex flex-wrap gap-1.5" id="tagCloud"></div>
             </div>
         </section>
 
@@ -102,19 +111,17 @@
         <section>
             <div class="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2.5">
                 <span class="text-sm font-bold text-neutral-900 flex items-center gap-2">
-                    전체 목록 
+                    전체 목록
                     <span id="recipeCountBadge" class="text-xs font-normal text-neutral-500">0개</span>
                 </span>
             </div>
 
-            <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Recipe Cards rendered here -->
-            </div>
+            <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 
-            <!-- Empty State -->
             <div id="emptyState" class="hidden text-center py-16 border border-dashed border-neutral-300 rounded">
                 <p class="text-xs font-medium text-neutral-500">등록된 레시피가 없거나 검색 결과가 없습니다.</p>
-                <button onclick="resetFilters()" class="mt-3 px-3.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold text-xs rounded transition border border-neutral-300">
+                <button onclick="resetFilters()"
+                    class="mt-3 px-3.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold text-xs rounded transition border border-neutral-300">
                     전체 목록 보기
                 </button>
             </div>
@@ -127,20 +134,24 @@
             <h2 id="formPageTitle" class="text-base font-bold text-neutral-900">새 레시피 작성</h2>
         </div>
 
-        <form id="recipeForm" onsubmit="handleFormSubmit(event)" class="text-xs flex flex-col space-y-5 max-w-3xl mx-auto">
+        <form id="recipeForm" onsubmit="handleFormSubmit(event)"
+            class="text-xs flex flex-col space-y-5 max-w-3xl mx-auto">
             <input type="hidden" id="formRecipeId">
 
             <!-- Image Upload Box -->
             <div>
-                <div class="relative w-full h-72 bg-neutral-50 border border-neutral-200 rounded flex flex-col items-center justify-center text-neutral-400 group overflow-hidden">
+                <div
+                    class="relative w-full h-72 bg-neutral-50 border border-neutral-200 rounded flex flex-col items-center justify-center text-neutral-400 group overflow-hidden">
                     <img id="formImagePreview" src="" class="absolute inset-0 w-full h-full object-cover hidden">
-                    
-                    <div id="imagePlaceholderText" class="flex flex-col items-center justify-center space-y-2 pointer-events-none z-10 text-center px-4">
+
+                    <div id="imagePlaceholderText"
+                        class="flex flex-col items-center justify-center space-y-2 pointer-events-none z-10 text-center px-4">
                         <i class="fa-solid fa-camera text-3xl text-neutral-400"></i>
                         <span class="text-xs font-semibold text-neutral-600">이미지 첨부</span>
                     </div>
 
-                    <label class="absolute inset-0 cursor-pointer z-10 flex items-center justify-center bg-neutral-950/0 hover:bg-neutral-950/5 transition">
+                    <label
+                        class="absolute inset-0 cursor-pointer z-10 flex items-center justify-center bg-neutral-950/0 hover:bg-neutral-950/5 transition">
                         <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
                     </label>
                 </div>
@@ -149,28 +160,29 @@
             <!-- Image URL Input -->
             <div class="flex items-center gap-2">
                 <span class="text-[11px] text-neutral-500 font-semibold whitespace-nowrap">사진 URL:</span>
-                <input type="url" id="formImageUrl" oninput="updateImagePreviewFromUrl()" placeholder="https://example.com/image.jpg" 
-                       class="w-full px-3 py-2 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950">
+                <input type="url" id="formImageUrl" oninput="updateImagePreviewFromUrl()"
+                    placeholder="https://example.com/image.jpg"
+                    class="w-full px-3 py-2 bg-white border border-neutral-200 rounded text-xs focus:outline-none focus:border-neutral-950">
             </div>
 
             <!-- Title & Summary -->
             <div class="space-y-4">
                 <div>
                     <label class="block font-bold text-neutral-900 mb-1">제목 <span class="text-red-500">*</span></label>
-                    <input type="text" id="formTitle" required placeholder="계란말이" 
-                           class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                    <input type="text" id="formTitle" required placeholder="계란말이"
+                        class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
                 </div>
 
                 <div>
                     <label class="block font-bold text-neutral-900 mb-1">설명</label>
-                    <input type="text" id="formDescription" placeholder="야채 계란말이" 
-                           class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                    <input type="text" id="formDescription" placeholder="야채 계란말이"
+                        class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
                 </div>
 
                 <div>
                     <label class="block font-bold text-neutral-900 mb-1">태그 (쉼표로 구분)</label>
-                    <input type="text" id="formTags" placeholder="한식, 반찬, 초간단" 
-                           class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                    <input type="text" id="formTags" placeholder="한식, 반찬, 초간단"
+                        class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
                 </div>
             </div>
 
@@ -181,7 +193,8 @@
 
                     <div class="flex items-center gap-1.5">
                         <span class="text-[11px] text-neutral-500 font-medium">작성할 인분:</span>
-                        <select id="formServingSelector" onchange="switchFormServingTab(this.value)" class="px-2.5 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
+                        <select id="formServingSelector" onchange="switchFormServingTab(this.value)"
+                            class="w-16 px-2.5 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer text-center">
                             <option value="1">1인분</option>
                             <option value="2">2인분</option>
                             <option value="3">3인분</option>
@@ -192,117 +205,128 @@
                     </div>
                 </div>
 
-                <div id="ingredientInputBoxes">
-                    <!-- Dynamically generated textareas -->
-                </div>
-                <p class="text-[11px] text-neutral-400 mt-1">※ 줄바꿈(엔터) 구분 / 소제목은 맨 앞 ':' / 단 넘김은 단독 줄에 '::' 입력</p>
+                <div id="ingredientInputBoxes"></div>
+                <p class="text-[11px] text-neutral-400 mt-1">※ 메인 엔터: 불릿(•) 생성 / 키패드엔터: 우측단 이동</p>
             </div>
 
-            <!-- Cooking Steps -->
+            <!-- Cooking Steps (Blue Box Region) -->
             <div class="pt-2 border-t border-neutral-100">
                 <label class="block font-bold text-neutral-900 mb-1">조리 순서 <span class="text-red-500">*</span></label>
-                <textarea id="formSteps" required rows="8" placeholder="1. 볼에 계란을 깨트린 뒤 소금을 넣고 잘 푼다.&#10;2. 다진 당근과 대파를 계란물에 섞는다.&#10;3. 팬에 기름을 두르고 조금씩 부어가며 익힌다." 
-                          class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[180px]"></textarea>
-                <p class="text-[11px] text-neutral-400 mt-1">※ 줄바꿈(엔터)으로 구분하여 작성해주세요.</p>
+                <div class="border border-neutral-200 rounded bg-white p-3 relative">
+                    <div class="flex flex-row items-stretch relative min-h-[160px]">
+                        <textarea id="formSteps" required oninput="handleStepsInput(event); autoResizeTextarea(this)"
+                            onkeydown="handleStepsKeydown(event)" placeholder="볼에 계란을 깨트린 뒤 소금을 넣고 잘 푼다."
+                            class="w-full bg-transparent text-neutral-900 focus:outline-none text-xs leading-relaxed resize-none overflow-hidden p-1 min-h-[150px] placeholder:text-neutral-300"></textarea>
+                    </div>
+                </div>
+                <p class="text-[11px] text-neutral-400 mt-1">※ 엔터: 번호 자동생성 / Shift+엔터: 강제 개행(번호 없음, 윗줄 번호 기준 들여쓰기 공백 삽입)
+                </p>
             </div>
 
             <!-- Source Section -->
             <div class="pt-2 border-t border-neutral-100 space-y-3">
                 <label class="block font-bold text-neutral-900">출처</label>
                 <div class="space-y-3">
-                    <!-- Platform Icon Selector -->
                     <div class="flex items-center gap-4" id="platformSelector">
-                        <button type="button" onclick="setPlatform('인스타그램')" class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="인스타그램">
+                        <button type="button" onclick="setPlatform('인스타그램')"
+                            class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition"
+                            title="인스타그램">
                             <i class="fa-brands fa-instagram text-2xl text-pink-600"></i>
                         </button>
-                        <button type="button" onclick="setPlatform('유튜브')" class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="유튜브">
+                        <button type="button" onclick="setPlatform('유튜브')"
+                            class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition"
+                            title="유튜브">
                             <i class="fa-brands fa-youtube text-2xl text-red-600"></i>
                         </button>
-                        <button type="button" onclick="setPlatform('네이버')" class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="네이버">
+                        <button type="button" onclick="setPlatform('네이버')"
+                            class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition"
+                            title="네이버">
                             <span class="font-black text-lg text-green-600">N</span>
                         </button>
-                        <button type="button" onclick="setPlatform('기타')" class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition" title="기타">
+                        <button type="button" onclick="setPlatform('기타')"
+                            class="platform-btn w-12 h-12 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition"
+                            title="기타">
                             <i class="fa-solid fa-link text-base text-neutral-600"></i>
                         </button>
                     </div>
                     <input type="hidden" id="formSourcePlatform" value="">
                     <div>
-                        <input type="url" id="formSourceUrl" placeholder="URL 링크" 
-                               class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
+                        <input type="url" id="formSourceUrl" placeholder="URL 링크"
+                            class="w-full px-3.5 py-2.5 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs">
                     </div>
                 </div>
             </div>
 
             <!-- Form Buttons -->
             <div class="pt-6 flex justify-end gap-3">
-                <button type="button" onclick="history.back()" class="px-6 py-3 bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-900 font-semibold rounded text-xs transition">취소</button>
-                <button type="submit" class="px-8 py-3 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold rounded text-xs transition">저장하기</button>
+                <button type="button" onclick="history.back()"
+                    class="px-6 py-3 bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-900 font-semibold rounded text-xs transition">취소</button>
+                <button type="submit"
+                    class="px-8 py-3 bg-neutral-950 hover:bg-neutral-800 text-white font-semibold rounded text-xs transition">저장하기</button>
             </div>
         </form>
     </div>
 
     <!-- ================= VIEW 3: DETAIL FULL PAGE ================= -->
     <div id="detailViewContainer" class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full hidden">
-        <!-- Detail Top Bar -->
         <div class="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2.5">
             <button onclick="history.back()" class="text-neutral-900 hover:text-black font-semibold text-sm transition">
                 ← 목록으로
             </button>
             <div class="flex items-center gap-2">
-                <button onclick="deleteCurrentRecipe()" class="text-red-600 hover:text-red-800 font-semibold text-sm transition">
+                <button onclick="deleteCurrentRecipe()"
+                    class="text-red-600 hover:text-red-800 font-semibold text-sm transition">
                     삭제
                 </button>
-                <button onclick="editCurrentRecipe()" class="text-neutral-900 hover:text-black font-semibold text-sm transition underline">
+                <button onclick="editCurrentRecipe()"
+                    class="text-neutral-900 hover:text-black font-semibold text-sm transition underline">
                     수정
                 </button>
             </div>
         </div>
 
-        <!-- Recipe Content -->
         <article class="bg-white rounded border border-neutral-200 overflow-hidden text-xs leading-relaxed">
-            <!-- Cover Image -->
             <div class="relative w-full h-80 md:h-96 bg-neutral-100 border-b border-neutral-200">
                 <img id="detailImage" src="" alt="" class="w-full h-full object-cover">
             </div>
 
-            <!-- Text Content Details -->
             <div class="p-6 md:p-8 space-y-6">
                 <div>
                     <div class="flex items-start justify-between gap-4">
                         <h2 id="detailTitle" class="text-2xl md:text-3xl font-bold text-neutral-950 leading-snug"></h2>
-                        <span id="detailServingBadge" class="text-xs font-semibold text-neutral-600 bg-neutral-100 px-3 py-1.5 rounded border border-neutral-200 flex-shrink-0"></span>
+                        <span id="detailServingBadge"
+                            class="text-xs font-semibold text-neutral-600 bg-neutral-100 px-3 py-1.5 rounded border border-neutral-200 flex-shrink-0"></span>
                     </div>
                     <p id="detailDescription" class="text-xs md:text-sm text-neutral-600 mt-2 leading-relaxed"></p>
                     <div id="detailTags" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
 
-                <!-- Ingredients with Serving Selector -->
                 <div class="pt-4 border-t border-neutral-100">
                     <div class="flex items-center justify-between mb-2.5">
                         <h3 class="font-bold text-neutral-950 text-[15px]">재료</h3>
-                        
                         <div class="flex items-center gap-2">
                             <span class="text-[11px] text-neutral-500 font-medium">분량 선택:</span>
-                            <select id="detailServingSelect" onchange="changeDetailServing(this.value)" class="px-3 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
+                            <select id="detailServingSelect" onchange="changeDetailServing(this.value)"
+                                class="px-3 py-1 bg-neutral-100 border border-neutral-200 rounded text-xs font-semibold focus:outline-none cursor-pointer">
                             </select>
                         </div>
                     </div>
-
-                    <ul id="detailIngredients" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm md:text-base text-neutral-700"></ul>
+                    <ul id="detailIngredients"
+                        class="grid grid-cols-2 gap-x-4 md:gap-x-8 gap-y-1 text-xs md:text-base text-neutral-700">
+                    </ul>
                 </div>
 
-                <!-- Cooking Steps -->
                 <div class="pt-4 border-t border-neutral-100">
                     <h3 class="font-bold text-neutral-950 mb-2.5 text-[15px]">조리 순서</h3>
                     <ol id="detailSteps" class="space-y-1.5 text-sm md:text-base text-neutral-800"></ol>
                 </div>
 
-                <!-- Source Link Section -->
                 <div id="detailSourceBox" class="pt-4 border-t border-neutral-100 hidden">
                     <h3 class="font-bold text-neutral-950 mb-2 text-sm">출처</h3>
                     <div class="flex items-center gap-3 text-xs">
                         <span id="detailSourceIcon" class="flex items-center justify-center flex-shrink-0"></span>
-                        <a id="detailSourceUrl" href="#" target="_blank" rel="noopener noreferrer" class="text-neutral-950 underline hover:text-neutral-600 truncate flex-grow text-xs font-medium"></a>
+                        <a id="detailSourceUrl" href="#" target="_blank" rel="noopener noreferrer"
+                            class="text-neutral-950 underline hover:text-neutral-600 truncate flex-grow text-xs font-medium"></a>
                     </div>
                 </div>
             </div>
@@ -320,12 +344,12 @@
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyBzG6zCG7fZS02YE8AHDSSrZPV_kMcLN-U",
-          authDomain: "recipe-book-d7652.firebaseapp.com",
-          projectId: "recipe-book-d7652",
-          storageBucket: "recipe-book-d7652.firebasestorage.app",
-          messagingSenderId: "85558334227",
-          appId: "1:85558334227:web:c31c01aa0a18b8a21c40e6"
+            apiKey: "AIzaSyBzG6zCG7fZS02YE8AHDSSrZPV_kMcLN-U",
+            authDomain: "recipe-book-d7652.firebaseapp.com",
+            projectId: "recipe-book-d7652",
+            storageBucket: "recipe-book-d7652.firebasestorage.app",
+            messagingSenderId: "85558334227",
+            appId: "1:85558334227:web:c31c01aa0a18b8a21c40e6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -338,18 +362,14 @@
 
         const FALLBACK_IMG = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=600&q=80';
 
-        // Firebase Firestore 실시간 연동
         onSnapshot(collection(db, "recipes"), (snapshot) => {
             recipes = [];
             snapshot.forEach((docSnap) => {
                 recipes.push({ id: docSnap.id, ...docSnap.data() });
             });
-            
             recipes.sort((a, b) => (b.createdAt?.seconds || b.createdAt || 0) - (a.createdAt?.seconds || a.createdAt || 0));
-
             renderTagCloud();
             renderRecipes();
-
             if (currentRecipeId && !document.getElementById('detailViewContainer').classList.contains('hidden')) {
                 renderDetailPageContent(currentRecipeId);
             }
@@ -357,8 +377,7 @@
             console.error("데이터 불러오기 실패:", error);
         });
 
-        // ================= ROUTING & HISTORY (뒤로가기 지원) =================
-        window.navigateTo = function(view, id = null, pushState = true) {
+        window.navigateTo = function (view, id = null, pushState = true) {
             if (pushState) {
                 const state = { view, id };
                 let url = '#main';
@@ -409,38 +428,29 @@
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
-        window.renderTagCloud = function() {
+        window.renderTagCloud = function () {
             const tagMap = {};
             recipes.forEach(r => {
-                (r.tags || []).forEach(t => {
-                    tagMap[t] = (tagMap[t] || 0) + 1;
-                });
+                (r.tags || []).forEach(t => { tagMap[t] = (tagMap[t] || 0) + 1; });
             });
-
             const tagCloud = document.getElementById('tagCloud');
             const clearBtn = document.getElementById('clearFiltersBtn');
-            
-            if (selectedTags.size > 0) {
-                clearBtn.classList.remove('hidden');
-            } else {
-                clearBtn.classList.add('hidden');
-            }
+            if (selectedTags.size > 0) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
 
             const tags = Object.keys(tagMap).sort();
             if (tags.length === 0) {
                 tagCloud.innerHTML = `<span class="text-xs text-neutral-400">등록된 태그가 없습니다.</span>`;
                 return;
             }
-
             tagCloud.innerHTML = tags.map(tag => {
                 const isSelected = selectedTags.has(tag);
                 return `
                     <button onclick="toggleTag('${tag}')" 
-                            class="px-2.5 py-1 text-xs font-semibold rounded transition flex items-center gap-1 ${
-                                isSelected 
-                                ? 'bg-neutral-950 text-white' 
-                                : 'bg-white text-neutral-700 hover:bg-neutral-200 border border-neutral-200'
-                            }">
+                            class="px-2.5 py-1 text-xs font-semibold rounded transition flex items-center gap-1 ${isSelected
+                        ? 'bg-neutral-950 text-white'
+                        : 'bg-white text-neutral-700 hover:bg-neutral-200 border border-neutral-200'
+                    }">
                         <span>#${tag}</span>
                         <span class="text-[10px] opacity-70">(${tagMap[tag]})</span>
                     </button>
@@ -448,23 +458,20 @@
             }).join('');
         };
 
-        window.toggleTag = function(tag) {
-            if (selectedTags.has(tag)) {
-                selectedTags.delete(tag);
-            } else {
-                selectedTags.add(tag);
-            }
+        window.toggleTag = function (tag) {
+            if (selectedTags.has(tag)) selectedTags.delete(tag);
+            else selectedTags.add(tag);
             renderTagCloud();
             renderRecipes();
         };
 
-        window.clearTagFilters = function() {
+        window.clearTagFilters = function () {
             selectedTags.clear();
             renderTagCloud();
             renderRecipes();
         };
 
-        window.resetFilters = function() {
+        window.resetFilters = function () {
             document.getElementById('searchInput').value = '';
             document.getElementById('searchFilterType').value = 'title';
             selectedTags.clear();
@@ -472,11 +479,9 @@
             renderRecipes();
         };
 
-        window.handleSearch = function() {
-            renderRecipes();
-        };
+        window.handleSearch = function () { renderRecipes(); };
 
-        window.renderRecipes = function() {
+        window.renderRecipes = function () {
             const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
             const filterType = document.getElementById('searchFilterType').value;
             const grid = document.getElementById('recipeGrid');
@@ -491,36 +496,26 @@
                 let ingredientText = titleText;
                 if (r.servingsMap) {
                     Object.values(r.servingsMap).forEach(arr => {
-                        if (Array.isArray(arr)) {
-                            ingredientText += ' ' + arr.join(' ').toLowerCase();
-                        }
+                        if (Array.isArray(arr)) ingredientText += ' ' + arr.join(' ').toLowerCase();
                     });
                 }
 
                 let matchesSearch = true;
                 if (searchVal) {
-                    if (filterType === 'title') {
-                        matchesSearch = titleText.includes(searchVal);
-                    } else if (filterType === 'ingredient') {
-                        matchesSearch = ingredientText.includes(searchVal);
-                    } else if (filterType === 'description') {
-                        matchesSearch = descCombinedText.includes(searchVal);
-                    }
+                    if (filterType === 'title') matchesSearch = titleText.includes(searchVal);
+                    else if (filterType === 'ingredient') matchesSearch = ingredientText.includes(searchVal);
+                    else if (filterType === 'description') matchesSearch = descCombinedText.includes(searchVal);
                 }
-
                 const matchesTags = selectedTags.size === 0 || Array.from(selectedTags).every(st => (r.tags || []).includes(st));
-
                 return matchesSearch && matchesTags;
             });
 
             countBadge.textContent = `${filtered.length}개`;
-
             if (filtered.length === 0) {
                 grid.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 return;
             }
-
             emptyState.classList.add('hidden');
 
             grid.innerHTML = filtered.map(r => {
@@ -529,36 +524,23 @@
                 if (sKeys.length > 0) {
                     servingLabel = sKeys.map(k => k.includes('이상') ? k : `${k}인분`).join(' · ');
                 }
-
                 return `
                 <div onclick="navigateTo('detail', '${r.id}')" 
                      class="bg-white rounded overflow-hidden border border-neutral-200 card-hover cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="relative h-48 w-full bg-neutral-100 flex-shrink-0">
-                            <img src="${r.imageUrl || FALLBACK_IMG}" 
-                                 onerror="this.src='${FALLBACK_IMG}'" 
-                                 alt="${r.title}" 
-                                 class="w-full h-full object-cover">
+                            <img src="${r.imageUrl || FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'" alt="${r.title}" class="w-full h-full object-cover">
                         </div>
-
                         <div class="p-4">
                             <div class="flex items-start justify-between gap-2">
-                                <h3 class="text-base font-bold text-neutral-950 leading-snug">
-                                    ${r.title}
-                                </h3>
-                                <span class="text-[11px] font-semibold text-neutral-600 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded flex-shrink-0">
-                                    ${servingLabel}
-                                </span>
+                                <h3 class="text-base font-bold text-neutral-950 leading-snug">${r.title}</h3>
+                                <span class="text-[11px] font-semibold text-neutral-600 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded flex-shrink-0">${servingLabel}</span>
                             </div>
-
                             ${r.description ? `<p class="text-xs text-neutral-500 mt-1.5 line-clamp-2 leading-relaxed">${r.description}</p>` : ''}
                         </div>
                     </div>
-
                     <div class="flex flex-wrap gap-2 px-4 pb-4 pt-0">
-                        ${(r.tags || []).map(t => `
-                            <span class="text-xs text-neutral-400 font-medium">#${t}</span>
-                        `).join('')}
+                        ${(r.tags || []).map(t => `<span class="text-xs text-neutral-400 font-medium">#${t}</span>`).join('')}
                     </div>
                 </div>
             `}).join('');
@@ -569,54 +551,49 @@
             if (!r) return;
 
             currentRecipeId = id;
-
             document.getElementById('detailImage').src = r.imageUrl || FALLBACK_IMG;
             document.getElementById('detailTitle').textContent = r.title;
             document.getElementById('detailDescription').textContent = r.description || '';
 
             const tagsBox = document.getElementById('detailTags');
-            tagsBox.innerHTML = (r.tags || []).map(t => `
-                <span class="text-xs text-neutral-400 font-medium">#${t}</span>
-            `).join('');
+            tagsBox.innerHTML = (r.tags || []).map(t => `<span class="text-xs text-neutral-400 font-medium">#${t}</span>`).join('');
 
             const servingSelect = document.getElementById('detailServingSelect');
             const servingsMap = r.servingsMap || {};
             const availableServings = Object.keys(servingsMap).filter(k => (servingsMap[k] || []).length > 0);
 
             if (availableServings.length > 0) {
-                servingSelect.innerHTML = availableServings.map(s => `
-                    <option value="${s}">${s.includes('이상') ? s : `${s}인분`}</option>
-                `).join('');
+                servingSelect.innerHTML = availableServings.map(s => `<option value="${s}">${s.includes('이상') ? s : `${s}인분`}</option>`).join('');
                 activeDetailServing = availableServings[0];
             } else {
                 servingSelect.innerHTML = `<option value="1">1인분</option>`;
                 activeDetailServing = '1';
             }
-
             document.getElementById('detailServingBadge').textContent = availableServings.map(s => s.includes('이상') ? s : `${s}인분`).join(' · ') || '1인분';
 
             renderDetailIngredients(r, activeDetailServing);
 
             const stepsList = document.getElementById('detailSteps');
-            stepsList.innerHTML = (r.steps || []).map((step, idx) => `
-                <li class="flex items-baseline gap-2 py-0.5">
-                    <strong class="font-bold text-neutral-900 flex-shrink-0">${idx + 1}</strong>
-                    <span class="leading-relaxed text-neutral-800">${step}</span>
-                </li>
-            `).join('');
+            stepsList.innerHTML = (r.steps || []).map((step, idx) => {
+                const lines = step.split('\n');
+                return `
+                    <li class="flex items-start gap-2 py-0.5">
+                        <strong class="font-bold text-neutral-900 flex-shrink-0">${idx + 1}.</strong>
+                        <div class="leading-relaxed text-neutral-800 flex-1">
+                            <div>${lines[0] || ''}</div>
+                            ${lines.slice(1).map(l => `<div style="padding-left: 1.5rem; text-indent: -1.5rem;">${l}</div>`).join('')}
+                        </div>
+                    </li>
+                `;
+            }).join('');
 
             const sourceBox = document.getElementById('detailSourceBox');
             if (r.sourceUrl || r.sourcePlatform) {
                 sourceBox.classList.remove('hidden');
-                
                 let iconHtml = '<i class="fa-solid fa-link text-neutral-600 text-base"></i>';
-                if (r.sourcePlatform === '인스타그램') {
-                    iconHtml = '<i class="fa-brands fa-instagram text-pink-600 text-xl"></i>';
-                } else if (r.sourcePlatform === '유튜브') {
-                    iconHtml = '<i class="fa-brands fa-youtube text-red-600 text-xl"></i>';
-                } else if (r.sourcePlatform === '네이버') {
-                    iconHtml = '<span class="font-black text-xl text-green-600">N</span>';
-                }
+                if (r.sourcePlatform === '인스타그램') iconHtml = '<i class="fa-brands fa-instagram text-pink-600 text-xl"></i>';
+                else if (r.sourcePlatform === '유튜브') iconHtml = '<i class="fa-brands fa-youtube text-red-600 text-xl"></i>';
+                else if (r.sourcePlatform === '네이버') iconHtml = '<span class="font-black text-xl text-green-600">N</span>';
                 document.getElementById('detailSourceIcon').innerHTML = iconHtml;
 
                 const urlElem = document.getElementById('detailSourceUrl');
@@ -628,15 +605,12 @@
             }
         }
 
-        window.changeDetailServing = function(val) {
+        window.changeDetailServing = function (val) {
             activeDetailServing = val;
             const r = recipes.find(item => item.id === currentRecipeId);
-            if (r) {
-                renderDetailIngredients(r, val);
-            }
+            if (r) renderDetailIngredients(r, val);
         };
 
-        // 상세 페이지 렌더링 (저장 후에는 회색 선 없이 깔끔한 2단 출력)
         function renderDetailIngredients(recipe, servingKey) {
             const ingrList = document.getElementById('detailIngredients');
             const items = (recipe.servingsMap && recipe.servingsMap[servingKey]) ? recipe.servingsMap[servingKey] : [];
@@ -651,14 +625,10 @@
             let isSecondColumn = false;
 
             items.forEach(item => {
-                if (item.trim() === '::') {
-                    isSecondColumn = true;
-                } else {
-                    if (isSecondColumn) {
-                        col2.push(item);
-                    } else {
-                        col1.push(item);
-                    }
+                if (item.trim() === '::') isSecondColumn = true;
+                else {
+                    if (isSecondColumn) col2.push(item);
+                    else col1.push(item);
                 }
             });
 
@@ -666,7 +636,7 @@
                 return list.map(item => {
                     if (item.startsWith(':')) {
                         const subtitleText = item.substring(1).trim();
-                        return `<li class="pt-3 pb-1 font-bold text-neutral-950 text-[14px] list-none">${subtitleText}</li>`;
+                        return `<li class="pt-3 pb-1 font-bold text-neutral-950 text-[13px] list-none">${subtitleText}</li>`;
                     }
                     return `
                         <li class="flex items-center justify-between py-0.5 px-1">
@@ -677,28 +647,28 @@
             };
 
             if (col2.length > 0) {
-                ingrList.className = "grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 text-sm md:text-base text-neutral-700 items-start";
+                ingrList.className = "grid grid-cols-2 gap-x-4 md:gap-x-8 gap-y-1 text-xs md:text-base text-neutral-700 items-start";
                 ingrList.innerHTML = `
                     <div class="space-y-0.5">${renderColumnHtml(col1)}</div>
                     <div class="space-y-0.5">${renderColumnHtml(col2)}</div>
                 `;
             } else {
-                ingrList.className = "grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 text-sm md:text-base text-neutral-700";
+                ingrList.className = "grid grid-cols-2 gap-x-4 md:gap-x-8 gap-y-1 text-xs md:text-base text-neutral-700";
                 ingrList.innerHTML = items.map(item => {
                     if (item.startsWith(':')) {
                         const subtitleText = item.substring(1).trim();
-                        return `<li class="col-span-full pt-3 pb-1 font-bold text-neutral-950 text-[14px]">${subtitleText}</li>`;
+                        return `<li class="col-span-full pt-3 pb-1 font-bold text-neutral-950 text-[13px]">${subtitleText}</li>`;
                     }
                     return `
                         <li class="flex items-center justify-between py-0.5 px-1">
-                            <span class="font-medium text-neutral-900">• ${item}</span>
+                            <span class="font-medium text-neutral-900 truncate">• ${item}</span>
                         </li>
                     `;
                 }).join('');
             }
         }
 
-        window.deleteCurrentRecipe = async function() {
+        window.deleteCurrentRecipe = async function () {
             if (!currentRecipeId) return;
             if (confirm('이 레시피를 삭제하시겠습니까?')) {
                 try {
@@ -711,105 +681,380 @@
             }
         };
 
-        window.editCurrentRecipe = function() {
-            navigateTo('form', currentRecipeId);
+        window.editCurrentRecipe = function () { navigateTo('form', currentRecipeId); };
+
+        // 공통 자동 높이 조절 함수
+        window.autoResizeTextarea = function (ta) {
+            ta.style.height = 'auto';
+            const minHeight = 120;
+            const newHeight = Math.max(ta.scrollHeight, minHeight);
+            ta.style.height = newHeight + 'px';
+
+            const opt = ta.getAttribute('data-opt');
+            if (opt) {
+                const leftTa = document.getElementById(`formIngredients_${opt}_left`);
+                const rightTa = document.getElementById(`formIngredients_${opt}_right`);
+                if (leftTa && rightTa) {
+                    leftTa.style.height = 'auto';
+                    rightTa.style.height = 'auto';
+                    const maxHeight = Math.max(leftTa.scrollHeight, rightTa.scrollHeight, minHeight);
+                    leftTa.style.height = maxHeight + 'px';
+                    rightTa.style.height = maxHeight + 'px';
+                }
+            }
         };
 
-        // 작성 폼 재료 입력창 초기화 및 '::' 감지 기능
-        window.setupFormIngredientsBox = function() {
+        // 재료 작성 상자 설정
+        window.setupFormIngredientsBox = function () {
             const container = document.getElementById('ingredientInputBoxes');
             const options = ['1', '2', '3', '4', '5', '6'];
-            
+
             container.innerHTML = options.map(opt => `
                 <div id="formIngrBox_${opt}" class="${opt === '1' ? '' : 'hidden'}">
                     <div id="ingrWrapper_${opt}" class="w-full">
-                        <div class="border border-neutral-200 rounded bg-white p-2">
-                            <textarea id="formIngredients_${opt}" rows="8" oninput="checkAndSplitIngredients('${opt}')"
-                                      placeholder="${opt}인분 재료를 입력하세요.&#10;:양념재료&#10;버터 10g&#10;마늘&#10;::&#10;:기타재료&#10;버터" 
-                                      class="w-full bg-transparent focus:outline-none text-xs leading-relaxed resize-y min-h-[160px]"></textarea>
+                        <div class="border border-neutral-200 rounded bg-white p-3 relative">
+                            <!-- 상단 안내 버튼 영역 -->
+                            <div class="flex justify-between items-center mb-2 pb-2 border-b border-neutral-100 text-[11px] text-neutral-500 font-semibold px-1 select-none">
+                                <button type="button" onclick="toggleCurrentLineSubtitle('${opt}')" class="px-2 py-0.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded border border-neutral-300 text-[10px] transition font-medium">
+                                    현재 줄 소제목으로 변경
+                                </button>
+                                <span class="text-neutral-400 text-[10px]">※ 메인 엔터: 불릿(•) 생성 / 키패드엔터: 우측단 이동</span>
+                            </div>
+
+                            <!-- 좌우 분할 입력 영역 -->
+                            <div class="flex flex-row items-stretch relative min-h-[120px] gap-2">
+                                <!-- 왼쪽 단 -->
+                                <div class="flex-1 pr-1 flex flex-col relative min-h-[120px]">
+                                    <div id="preview_${opt}_left" class="absolute inset-0 pointer-events-none text-xs leading-relaxed p-1 whitespace-pre-wrap break-all text-neutral-900 z-0"></div>
+                                    <textarea id="formIngredients_${opt}_left" 
+                                              data-opt="${opt}"
+                                              onfocus="setActiveTextArea(this)"
+                                              oninput="handleIngredientInput(event, '${opt}'); autoResizeTextarea(this);"
+                                              onkeydown="handleIngredientKeydown(event, '${opt}', 'left')"
+                                              placeholder="계란 2개&#10;버터 10g" 
+                                              class="w-full bg-transparent text-transparent caret-neutral-900 focus:outline-none text-xs leading-relaxed resize-none p-1 min-h-[120px] overflow-hidden relative z-10 placeholder:text-neutral-300"></textarea>
+                                </div>
+
+                                <!-- 중앙 구분선 -->
+                                <div class="w-[1px] bg-neutral-300 my-1 self-stretch flex-shrink-0"></div>
+
+                                <!-- 오른쪽 단 -->
+                                <div class="flex-1 pl-1 flex flex-col relative min-h-[120px]">
+                                    <div id="preview_${opt}_right" class="absolute inset-0 pointer-events-none text-xs leading-relaxed p-1 whitespace-pre-wrap break-all text-neutral-900 z-0"></div>
+                                    <textarea id="formIngredients_${opt}_right" 
+                                              data-opt="${opt}"
+                                              onfocus="setActiveTextArea(this)"
+                                              oninput="handleIngredientInput(event, '${opt}'); autoResizeTextarea(this);"
+                                              onkeydown="handleIngredientKeydown(event, '${opt}', 'right')"
+                                              placeholder="" 
+                                              class="w-full bg-transparent text-transparent caret-neutral-900 focus:outline-none text-xs leading-relaxed resize-none p-1 min-h-[120px] overflow-hidden relative z-10 placeholder:text-neutral-300"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             `).join('');
         };
 
-        // '::'를 입력하면 실시간으로 2단 편집 박스(회색 세로선 포함)로 변환
-        window.checkAndSplitIngredients = function(opt) {
-            const singleTa = document.getElementById(`formIngredients_${opt}`);
-            if (!singleTa) return;
+        let activeTextArea = null;
+        window.setActiveTextArea = function (ta) { activeTextArea = ta; };
 
-            if (singleTa.value.includes('::')) {
-                const parts = singleTa.value.split('::');
-                const leftText = parts[0].trim();
-                const rightText = parts.slice(1).join('::').trim();
-                renderTwoColumnEditor(opt, leftText, rightText);
+        // 소제목 미리보기 싱크
+        window.syncSubtitlePreview = function (opt, side) {
+            const ta = document.getElementById(`formIngredients_${opt}_${side}`);
+            const preview = document.getElementById(`preview_${opt}_${side}`);
+            if (!ta || !preview) return;
+
+            const lines = ta.value.split('\n');
+            preview.innerHTML = lines.map(line => {
+                if (line.startsWith(':')) {
+                    const subText = line.substring(1).trim();
+                    return `<div class="font-bold text-neutral-950 min-h-[1.25rem]">${subText}</div>`;
+                }
+                return `<div class="min-h-[1.25rem]">${line}</div>`;
+            }).join('');
+        };
+
+        // 재료 첫 글자 입력 시 불릿 자동 생성
+        window.handleIngredientInput = function (e, opt) {
+            const ta = e.target;
+            const val = ta.value;
+            const start = ta.selectionStart;
+
+            const lastNewline = val.lastIndexOf('\n', start - 1);
+            const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+            const currentLine = val.substring(lineStart, start);
+
+            if (currentLine.length > 0 && !currentLine.startsWith('• ') && !currentLine.startsWith(':')) {
+                const newLine = '• ' + currentLine;
+                ta.value = val.substring(0, lineStart) + newLine + val.substring(start);
+                ta.selectionStart = ta.selectionEnd = start + 2;
+            }
+
+            const side = ta.id.includes('_left') ? 'left' : 'right';
+            syncSubtitlePreview(opt, side);
+        };
+
+        // 소제목 토글
+        window.toggleCurrentLineSubtitle = function (opt) {
+            let ta = activeTextArea;
+            const leftTa = document.getElementById(`formIngredients_${opt}_left`);
+            const rightTa = document.getElementById(`formIngredients_${opt}_right`);
+
+            if (!ta || (ta !== leftTa && ta !== rightTa)) ta = leftTa;
+
+            const start = ta.selectionStart;
+            const val = ta.value;
+
+            const lastNewline = val.lastIndexOf('\n', start - 1);
+            const nextNewline = val.indexOf('\n', start);
+            const lineEnd = nextNewline === -1 ? val.length : nextNewline;
+            const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+
+            let currentLine = val.substring(lineStart, lineEnd);
+            let newLine = "";
+
+            if (currentLine.startsWith(':')) {
+                newLine = '• ' + currentLine.substring(1).trim();
+            } else {
+                if (currentLine.startsWith('• ')) {
+                    currentLine = currentLine.substring(2);
+                }
+                newLine = ':' + currentLine.trim();
+            }
+
+            ta.value = val.substring(0, lineStart) + newLine + val.substring(lineEnd);
+            ta.selectionStart = ta.selectionEnd = lineStart + newLine.length;
+            ta.focus();
+
+            const side = ta.id.includes('_left') ? 'left' : 'right';
+            syncSubtitlePreview(opt, side);
+            autoResizeTextarea(ta);
+        };
+
+        // 재료 키보드 이벤트 핸들러
+        window.handleIngredientKeydown = function (e, opt, currentSide) {
+            const ta = e.target;
+            const val = ta.value;
+            const start = ta.selectionStart;
+            const end = ta.selectionEnd;
+
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
+                return;
+            }
+
+            if (e.code === 'NumpadEnter' || e.key === 'NumpadEnter') {
+                e.preventDefault();
+
+                if (currentSide === 'left') {
+                    let cleanVal = val;
+                    const lastNewline = cleanVal.lastIndexOf('\n');
+                    if (lastNewline !== -1) {
+                        const lastLine = cleanVal.substring(lastNewline + 1).trim();
+                        if (lastLine === '' || lastLine === '•') {
+                            cleanVal = cleanVal.substring(0, lastNewline);
+                        }
+                    } else {
+                        const singleLine = cleanVal.trim();
+                        if (singleLine === '' || singleLine === '•') {
+                            cleanVal = '';
+                        }
+                    }
+                    ta.value = cleanVal;
+                    autoResizeTextarea(ta);
+                    syncSubtitlePreview(opt, 'left');
+
+                    const rightTa = document.getElementById(`formIngredients_${opt}_right`);
+                    if (rightTa) {
+                        rightTa.focus();
+                        const rVal = rightTa.value;
+                        if (!rVal.trim()) {
+                            rightTa.value = '• ';
+                        } else if (!rVal.endsWith('\n')) {
+                            rightTa.value = rVal + '\n• ';
+                        } else {
+                            rightTa.value = rVal + '• ';
+                        }
+                        rightTa.selectionStart = rightTa.selectionEnd = rightTa.value.length;
+                        autoResizeTextarea(rightTa);
+                        syncSubtitlePreview(opt, 'right');
+                    }
+                }
+                return;
+            }
+
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const insertText = '\n• ';
+                ta.value = val.substring(0, start) + insertText + val.substring(end);
+                ta.selectionStart = ta.selectionEnd = start + insertText.length;
+                autoResizeTextarea(ta);
+                syncSubtitlePreview(opt, currentSide);
+                return;
+            }
+
+            if (e.key === 'Backspace' && start === end) {
+                const lastNewline = val.lastIndexOf('\n', start - 1);
+                const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+
+                if (start === lineStart + 2 && val.substring(lineStart, lineStart + 2) === '• ') {
+                    e.preventDefault();
+                    if (lastNewline !== -1) {
+                        ta.value = val.substring(0, lastNewline) + val.substring(start);
+                        ta.selectionStart = ta.selectionEnd = lastNewline;
+                    } else {
+                        ta.value = val.substring(2);
+                        ta.selectionStart = ta.selectionEnd = 0;
+                    }
+                    autoResizeTextarea(ta);
+                    syncSubtitlePreview(opt, currentSide);
+                    return;
+                }
+            }
+
+            if (e.key === 'Delete' && start === end) {
+                const lastNewline = val.lastIndexOf('\n', start - 1);
+                const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+
+                if (start === lineStart && val.substring(lineStart, lineStart + 2) === '• ') {
+                    e.preventDefault();
+                    ta.value = val.substring(0, lineStart) + val.substring(lineStart + 2);
+                    ta.selectionStart = ta.selectionEnd = lineStart;
+                    autoResizeTextarea(ta);
+                    syncSubtitlePreview(opt, currentSide);
+                    return;
+                }
             }
         };
 
-        // 2단 편집 뷰 렌더링 (회색 세로 구분선 포함)
-        window.renderTwoColumnEditor = function(opt, leftVal = '', rightVal = '') {
-            const wrapper = document.getElementById(`ingrWrapper_${opt}`);
-            if (!wrapper) return;
+        // 조리 순서(파란색 박스) 타이핑 시 번호 자동 생성 제어 (강제 개행된 줄에는 번호 생성 금지)
+        window.handleStepsInput = function (e) {
+            const ta = e.target;
+            const val = ta.value;
+            const start = ta.selectionStart;
 
-            wrapper.innerHTML = `
-                <div class="flex items-stretch border border-neutral-200 rounded bg-white p-2 gap-4 relative">
-                    <!-- 왼쪽 단 -->
-                    <div class="flex-1 pr-3 border-r border-neutral-300">
-                        <div class="flex justify-between items-center mb-1 text-[11px] text-neutral-400 font-semibold px-1">
-                            <span>왼쪽 단</span>
-                            <button type="button" onclick="mergeToOneColumn('${opt}')" class="text-neutral-500 hover:text-neutral-900 underline">1단으로 합치기</button>
-                        </div>
-                        <textarea id="formIngredients_${opt}_left" rows="8" 
-                                  class="w-full bg-transparent focus:outline-none text-xs leading-relaxed resize-y min-h-[150px]">${leftVal}</textarea>
-                    </div>
-                    <!-- 오른쪽 단 -->
-                    <div class="flex-1 pl-1">
-                        <div class="mb-1 text-[11px] text-neutral-400 font-semibold px-1">오른쪽 단</div>
-                        <textarea id="formIngredients_${opt}_right" rows="8" 
-                                  class="w-full bg-transparent focus:outline-none text-xs leading-relaxed resize-y min-h-[150px]">${rightVal}</textarea>
-                    </div>
-                </div>
-            `;
+            const lastNewline = val.lastIndexOf('\n', start - 1);
+            const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+            const currentLine = val.substring(lineStart, start);
+
+            if (/^\d+\.\s/.test(currentLine) || /^\s+/.test(currentLine)) {
+                return;
+            }
+
+            if (currentLine.length > 0) {
+                const linesBefore = val.substring(0, lineStart).split('\n');
+                let nextNum = 1;
+                for (let l of linesBefore) {
+                    if (/^\d+\.\s/.test(l.trim())) nextNum++;
+                }
+                const prefix = `${nextNum}. `;
+                const newLine = prefix + currentLine;
+                ta.value = val.substring(0, lineStart) + newLine + val.substring(start);
+                ta.selectionStart = ta.selectionEnd = start + prefix.length;
+            }
         };
 
-        // 1단으로 다시 합치기
-        window.mergeToOneColumn = function(opt) {
-            const leftTa = document.getElementById(`formIngredients_${opt}_left`);
-            const rightTa = document.getElementById(`formIngredients_${opt}_right`);
-            const combinedText = (leftTa ? leftTa.value.trim() : '') + '\n::\n' + (rightTa ? rightTa.value.trim() : '');
+        // 조리 순서 키보드 이벤트 핸들러 (Shift+Enter 시 번호 없이 윗줄 번호 크기만큼 공백 들여쓰기 삽입)
+        window.handleStepsKeydown = function (e) {
+            const ta = e.target;
+            const val = ta.value;
+            const start = ta.selectionStart;
+            const end = ta.selectionEnd;
 
-            const wrapper = document.getElementById(`ingrWrapper_${opt}`);
-            if (!wrapper) return;
+            if (e.key === 'Enter' && e.shiftKey) {
+                e.preventDefault();
+                const lastNewline = val.lastIndexOf('\n', start - 1);
+                const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+                const currentLine = val.substring(lineStart, start);
 
-            wrapper.innerHTML = `
-                <div class="border border-neutral-200 rounded bg-white p-2">
-                    <textarea id="formIngredients_${opt}" rows="8" oninput="checkAndSplitIngredients('${opt}')"
-                              placeholder="재료를 입력하세요. (:: 입력 시 2단으로 분리됩니다)" 
-                              class="w-full bg-transparent focus:outline-none text-xs leading-relaxed resize-y min-h-[160px]">${combinedText.trim()}</textarea>
-                </div>
-            `;
+                const match = currentLine.match(/^(\d+\.\s*)/);
+
+                let indentSpaces = '    '; // 기본 4칸
+                if (match) {
+                    // 기존: 윗줄 번호 길이만큼 맞춤 -> 수정: 무조건 4칸 공백 고정 (숫자 칸 수와 무관하게 4칸)
+                    indentSpaces = '    ';
+
+                    // 만약 4칸이 부족해서 5칸, 6칸으로 늘리고 싶으시면 아래처럼 스페이스바를 더 치시면 됩니다!
+                    // indentSpaces = '      '; // 6칸 원하실 경우
+                }
+
+                const insertText = '\n' + indentSpaces;
+                ta.value = val.substring(0, start) + insertText + val.substring(end);
+                ta.selectionStart = ta.selectionEnd = start + insertText.length;
+                autoResizeTextarea(ta);
+                return;
+            }
+
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const lines = val.substring(0, start).split('\n');
+                let nextNum = 1;
+                for (let l of lines) {
+                    const trimmed = l.trim();
+                    if (/^\d+\./.test(trimmed)) nextNum++;
+                }
+                const insertText = `\n${nextNum}. `;
+                ta.value = val.substring(0, start) + insertText + val.substring(end);
+                ta.selectionStart = ta.selectionEnd = start + insertText.length;
+                autoResizeTextarea(ta);
+                return;
+            }
+
+            if (e.key === 'Backspace' && start === end) {
+                const lastNewline = val.lastIndexOf('\n', start - 1);
+                const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+                const linePrefixMatch = val.substring(lineStart).match(/^(\d+\.\s+)/);
+
+                if (linePrefixMatch) {
+                    const prefixLen = linePrefixMatch[1].length;
+                    if (start === lineStart + prefixLen) {
+                        e.preventDefault();
+                        if (lastNewline !== -1) {
+                            ta.value = val.substring(0, lastNewline) + val.substring(start);
+                            ta.selectionStart = ta.selectionEnd = lastNewline;
+                        } else {
+                            ta.value = val.substring(prefixLen);
+                            ta.selectionStart = ta.selectionEnd = 0;
+                        }
+                        autoResizeTextarea(ta);
+                        return;
+                    }
+                }
+            }
+
+            if (e.key === 'Delete' && start === end) {
+                const lastNewline = val.lastIndexOf('\n', start - 1);
+                const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+                const linePrefixMatch = val.substring(lineStart).match(/^(\d+\.\s+)/);
+
+                if (linePrefixMatch) {
+                    const prefixLen = linePrefixMatch[1].length;
+                    if (start === lineStart) {
+                        e.preventDefault();
+                        ta.value = val.substring(0, lineStart) + val.substring(lineStart + prefixLen);
+                        ta.selectionStart = ta.selectionEnd = lineStart;
+                        autoResizeTextarea(ta);
+                        return;
+                    }
+                }
+            }
         };
 
-        window.switchFormServingTab = function(val) {
+        window.switchFormServingTab = function (val) {
             const options = ['1', '2', '3', '4', '5', '6'];
             options.forEach(opt => {
                 const box = document.getElementById(`formIngrBox_${opt}`);
                 if (box) {
-                    if (opt === val) {
-                        box.classList.remove('hidden');
-                    } else {
-                        box.classList.add('hidden');
-                    }
+                    if (opt === val) box.classList.remove('hidden');
+                    else box.classList.add('hidden');
                 }
             });
         };
 
-        window.setPlatform = function(platformName) {
+        window.setPlatform = function (platformName) {
             document.getElementById('formSourcePlatform').value = platformName;
             const buttons = document.querySelectorAll('.platform-btn');
-            buttons.forEach(btn => {
-                btn.classList.remove('border-neutral-950', 'bg-neutral-100');
-            });
+            buttons.forEach(btn => btn.classList.remove('border-neutral-950', 'bg-neutral-100'));
             event.currentTarget.classList.add('border-neutral-950', 'bg-neutral-100');
         };
 
@@ -824,6 +1069,12 @@
             document.getElementById('formServingSelector').value = '1';
             switchFormServingTab('1');
 
+            const stepsTa = document.getElementById('formSteps');
+            if (stepsTa) {
+                stepsTa.value = '';
+                autoResizeTextarea(stepsTa);
+            }
+
             if (editId) {
                 const r = recipes.find(item => item.id === editId);
                 if (!r) return;
@@ -834,7 +1085,12 @@
                 document.getElementById('formDescription').value = r.description || '';
                 document.getElementById('formTags').value = (r.tags || []).join(', ');
                 document.getElementById('formImageUrl').value = r.imageUrl || '';
-                document.getElementById('formSteps').value = (r.steps || []).join('\n');
+
+                if (r.steps && r.steps.length > 0) {
+                    stepsTa.value = r.steps.map((s, idx) => `${idx + 1}. ${s}`).join('\n');
+                }
+                autoResizeTextarea(stepsTa);
+
                 document.getElementById('formSourcePlatform').value = r.sourcePlatform || '';
                 document.getElementById('formSourceUrl').value = r.sourceUrl || '';
 
@@ -851,16 +1107,29 @@
                     if (servingsMap[opt]) {
                         const arr = servingsMap[opt];
                         const splitIdx = arr.indexOf('::');
+
+                        const leftTa = document.getElementById(`formIngredients_${opt}_left`);
+                        const rightTa = document.getElementById(`formIngredients_${opt}_right`);
+
+                        const formatForEdit = (itemArr) => {
+                            if (!itemArr || itemArr.length === 0) return '';
+                            return itemArr.map(item => {
+                                if (item.startsWith(':')) return item;
+                                return '• ' + item;
+                            }).join('\n');
+                        };
+
                         if (splitIdx !== -1) {
                             const leftArr = arr.slice(0, splitIdx);
                             const rightArr = arr.slice(splitIdx + 1);
-                            renderTwoColumnEditor(opt, leftArr.join('\n'), rightArr.join('\n'));
+                            if (leftTa) { leftTa.value = formatForEdit(leftArr); autoResizeTextarea(leftTa); }
+                            if (rightTa) { rightTa.value = formatForEdit(rightArr); autoResizeTextarea(rightTa); }
                         } else {
-                            const textarea = document.getElementById(`formIngredients_${opt}`);
-                            if (textarea) {
-                                textarea.value = arr.join('\n');
-                            }
+                            if (leftTa) { leftTa.value = formatForEdit(arr); autoResizeTextarea(leftTa); }
                         }
+
+                        syncSubtitlePreview(opt, 'left');
+                        syncSubtitlePreview(opt, 'right');
                     }
                 });
 
@@ -876,33 +1145,27 @@
                 document.getElementById('formPageTitle').textContent = '새 레시피 작성';
                 document.getElementById('formRecipeId').value = '';
                 preview.classList.add('hidden');
-                textPlaceholder.classList.remove('hidden');
+                textPlaceholder.classList.add('hidden'); // placeholder 수정
             }
         }
 
-        window.handleImageUpload = function(e) {
+        window.handleImageUpload = function (e) {
             const file = e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(evt) {
+            reader.onload = function (evt) {
                 const img = new Image();
-                img.onload = function() {
+                img.onload = function () {
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
                     const max_size = 800;
 
                     if (width > height) {
-                        if (width > max_size) {
-                            height *= max_size / width;
-                            width = max_size;
-                        }
+                        if (width > max_size) { height *= max_size / width; width = max_size; }
                     } else {
-                        if (height > max_size) {
-                            width *= max_size / height;
-                            height = max_size;
-                        }
+                        if (height > max_size) { width *= max_size / height; height = max_size; }
                     }
 
                     canvas.width = width;
@@ -911,7 +1174,6 @@
                     ctx.drawImage(img, 0, 0, width, height);
 
                     const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
                     document.getElementById('formImageUrl').value = compressedDataUrl;
                     const preview = document.getElementById('formImagePreview');
                     preview.src = compressedDataUrl;
@@ -923,7 +1185,7 @@
             reader.readAsDataURL(file);
         };
 
-        window.updateImagePreviewFromUrl = function() {
+        window.updateImagePreviewFromUrl = function () {
             const url = document.getElementById('formImageUrl').value.trim();
             const preview = document.getElementById('formImagePreview');
             const textPlaceholder = document.getElementById('imagePlaceholderText');
@@ -938,7 +1200,7 @@
             }
         };
 
-        window.handleFormSubmit = async function(e) {
+        window.handleFormSubmit = async function (e) {
             e.preventDefault();
 
             const id = document.getElementById('formRecipeId').value;
@@ -954,7 +1216,8 @@
                 .map(t => t.trim().replace(/^#/, ''))
                 .filter(t => t.length > 0);
 
-            const steps = rawSteps.split('\n')
+            // 저장할 때 steps 가공: 번호(`1. `, `2. ` 등)는 제거하되, Shift+Enter로 강제 개행된 들여쓰기 줄들은 그대로 보존
+            const steps = rawSteps.split(/\r?\n(?=\d+\.\s)/)
                 .map(s => s.trim().replace(/^\d+[\.\)]\s*/, ''))
                 .filter(s => s.length > 0);
 
@@ -962,23 +1225,34 @@
             ['1', '2', '3', '4', '5', '6'].forEach(opt => {
                 const leftTa = document.getElementById(`formIngredients_${opt}_left`);
                 const rightTa = document.getElementById(`formIngredients_${opt}_right`);
-                const singleTa = document.getElementById(`formIngredients_${opt}`);
 
-                let rawText = '';
-                if (leftTa && rightTa) {
-                    const leftVal = leftTa.value.trim();
-                    const rightVal = rightTa.value.trim();
-                    rawText = leftVal + (rightVal ? '\n::\n' + rightVal : '');
-                } else if (singleTa) {
-                    rawText = singleTa.value;
-                }
+                const leftVal = leftTa ? leftTa.value.trim() : '';
+                const rightVal = rightTa ? rightTa.value.trim() : '';
 
-                if (rawText.trim()) {
-                    const items = rawText.split('\n')
+                const cleanItems = (text) => {
+                    if (!text) return [];
+                    return text.split('\n')
                         .map(i => i.trim())
+                        .map(i => {
+                            if (i.startsWith('• ')) return i.substring(2).trim();
+                            if (i === '•') return '';
+                            return i;
+                        })
                         .filter(i => i.length > 0);
-                    if (items.length > 0) {
-                        servingsMap[opt] = items;
+                };
+
+                if (leftVal || rightVal) {
+                    const leftItems = cleanItems(leftVal);
+                    const rightItems = cleanItems(rightVal);
+
+                    let combined = [...leftItems];
+                    if (rightItems.length > 0) {
+                        combined.push('::');
+                        combined = combined.concat(rightItems);
+                    }
+
+                    if (combined.length > 0) {
+                        servingsMap[opt] = combined;
                     }
                 }
             });
@@ -1014,7 +1288,6 @@
             }
         };
 
-        // 초기 히스토리 상태 설정 및 실행
         if (!location.hash) {
             history.replaceState({ view: 'main' }, '', '#main');
         } else {
@@ -1036,4 +1309,5 @@
         setupFormIngredientsBox();
     </script>
 </body>
+
 </html>
