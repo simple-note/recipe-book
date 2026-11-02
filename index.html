@@ -123,7 +123,6 @@
 
     <!-- ================= VIEW 2: WRITE / EDIT FULL PAGE ================= -->
     <div id="formViewContainer" class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full hidden">
-        <!-- 타이틀을 입력 폼 박스와 동일한 가로 폭(max-w-3xl) 및 가운데 정렬로 일치시킴 -->
         <div class="max-w-3xl mx-auto mb-3">
             <h2 id="formPageTitle" class="text-base font-bold text-neutral-900">새 레시피 작성</h2>
         </div>
@@ -196,7 +195,7 @@
                 <div id="ingredientInputBoxes">
                     <!-- Dynamically generated textareas -->
                 </div>
-                <p class="text-[11px] text-neutral-400 mt-1">※ 줄바꿈(엔터)으로 구분하여 작성해주세요.</p>
+                <p class="text-[11px] text-neutral-400 mt-1">※ 줄바꿈(엔터) 구분 / 소제목은 맨 앞 ':' / 단 넘김은 단독 줄에 '::' 입력</p>
             </div>
 
             <!-- Cooking Steps -->
@@ -280,7 +279,7 @@
                 <!-- Ingredients with Serving Selector -->
                 <div class="pt-4 border-t border-neutral-100">
                     <div class="flex items-center justify-between mb-2.5">
-                        <h3 class="font-bold text-neutral-950 text-sm md:text-base">재료</h3>
+                        <h3 class="font-bold text-neutral-950 text-[15px]">재료</h3>
                         
                         <div class="flex items-center gap-2">
                             <span class="text-[11px] text-neutral-500 font-medium">분량 선택:</span>
@@ -294,7 +293,7 @@
 
                 <!-- Cooking Steps -->
                 <div class="pt-4 border-t border-neutral-100">
-                    <h3 class="font-bold text-neutral-950 mb-2.5 text-sm md:text-base">조리 순서</h3>
+                    <h3 class="font-bold text-neutral-950 mb-2.5 text-[15px]">조리 순서</h3>
                     <ol id="detailSteps" class="space-y-1.5 text-sm md:text-base text-neutral-800"></ol>
                 </div>
 
@@ -407,7 +406,6 @@
                 `;
                 renderDetailPageContent(id);
             }
-            // 이 코드를 추가하여 페이지가 바뀔 때마다 무조건 맨 위로 스크롤 이동
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
@@ -638,33 +636,66 @@
             }
         };
 
+        // 상세 페이지 렌더링 (저장 후에는 회색 선 없이 깔끔한 2단 출력)
         function renderDetailIngredients(recipe, servingKey) {
             const ingrList = document.getElementById('detailIngredients');
             const items = (recipe.servingsMap && recipe.servingsMap[servingKey]) ? recipe.servingsMap[servingKey] : [];
 
             if (items.length === 0) {
-                ingrList.innerHTML = `<li class="text-neutral-400 italic py-1">등록된 재료 정보가 없습니다.</li>`;
+                ingrList.innerHTML = `<li class="text-neutral-400 italic py-1 col-span-full">등록된 재료 정보가 없습니다.</li>`;
                 return;
             }
 
-            ingrList.innerHTML = items.map(item => {
-                // 재료 글자 맨 앞에 콜론(:)이 포함되어 있다면 불릿 없는 소제목으로 렌더링
-                if (item.startsWith(':')) {
-                    const subtitleText = item.substring(1).trim(); // 콜론을 제외한 텍스트 추출
+            const col1 = [];
+            const col2 = [];
+            let isSecondColumn = false;
+
+            items.forEach(item => {
+                if (item.trim() === '::') {
+                    isSecondColumn = true;
+                } else {
+                    if (isSecondColumn) {
+                        col2.push(item);
+                    } else {
+                        col1.push(item);
+                    }
+                }
+            });
+
+            const renderColumnHtml = (list) => {
+                return list.map(item => {
+                    if (item.startsWith(':')) {
+                        const subtitleText = item.substring(1).trim();
+                        return `<li class="pt-3 pb-1 font-bold text-neutral-950 text-[14px] list-none">${subtitleText}</li>`;
+                    }
                     return `
-                        <li class="col-span-full pt-3 pb-1 font-bold text-neutral-950 text-xs">
-                            ${subtitleText}
+                        <li class="flex items-center justify-between py-0.5 px-1">
+                            <span class="font-medium text-neutral-900">• ${item}</span>
                         </li>
                     `;
-                }
+                }).join('');
+            };
 
-                // 일반 재료는 기존대로 불릿과 함께 출력
-                return `
-                    <li class="flex items-center justify-between py-0.5 px-1">
-                        <span class="font-medium text-neutral-900">• ${item}</span>
-                    </li>
+            if (col2.length > 0) {
+                ingrList.className = "grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 text-sm md:text-base text-neutral-700 items-start";
+                ingrList.innerHTML = `
+                    <div class="space-y-0.5">${renderColumnHtml(col1)}</div>
+                    <div class="space-y-0.5">${renderColumnHtml(col2)}</div>
                 `;
-            }).join('');
+            } else {
+                ingrList.className = "grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 text-sm md:text-base text-neutral-700";
+                ingrList.innerHTML = items.map(item => {
+                    if (item.startsWith(':')) {
+                        const subtitleText = item.substring(1).trim();
+                        return `<li class="col-span-full pt-3 pb-1 font-bold text-neutral-950 text-[14px]">${subtitleText}</li>`;
+                    }
+                    return `
+                        <li class="flex items-center justify-between py-0.5 px-1">
+                            <span class="font-medium text-neutral-900">• ${item}</span>
+                        </li>
+                    `;
+                }).join('');
+            }
         }
 
         window.deleteCurrentRecipe = async function() {
@@ -684,17 +715,79 @@
             navigateTo('form', currentRecipeId);
         };
 
+        // 작성 폼 재료 입력창 초기화 및 '::' 감지 기능
         window.setupFormIngredientsBox = function() {
             const container = document.getElementById('ingredientInputBoxes');
             const options = ['1', '2', '3', '4', '5', '6'];
             
             container.innerHTML = options.map(opt => `
                 <div id="formIngrBox_${opt}" class="${opt === '1' ? '' : 'hidden'}">
-                    <textarea id="formIngredients_${opt}" rows="6" 
-                              placeholder="${opt}인분 재료를 입력하세요.&#10;계란 2개&#10;소금 1꼬집" 
-                              class="w-full px-3.5 py-3 bg-white border border-neutral-200 rounded focus:border-neutral-950 focus:outline-none text-xs leading-relaxed resize-y min-h-[140px]"></textarea>
+                    <div id="ingrWrapper_${opt}" class="w-full">
+                        <div class="border border-neutral-200 rounded bg-white p-2">
+                            <textarea id="formIngredients_${opt}" rows="8" oninput="checkAndSplitIngredients('${opt}')"
+                                      placeholder="${opt}인분 재료를 입력하세요.&#10;:양념재료&#10;버터 10g&#10;마늘&#10;::&#10;:기타재료&#10;버터" 
+                                      class="w-full bg-transparent focus:outline-none text-xs leading-relaxed resize-y min-h-[160px]"></textarea>
+                        </div>
+                    </div>
                 </div>
             `).join('');
+        };
+
+        // '::'를 입력하면 실시간으로 2단 편집 박스(회색 세로선 포함)로 변환
+        window.checkAndSplitIngredients = function(opt) {
+            const singleTa = document.getElementById(`formIngredients_${opt}`);
+            if (!singleTa) return;
+
+            if (singleTa.value.includes('::')) {
+                const parts = singleTa.value.split('::');
+                const leftText = parts[0].trim();
+                const rightText = parts.slice(1).join('::').trim();
+                renderTwoColumnEditor(opt, leftText, rightText);
+            }
+        };
+
+        // 2단 편집 뷰 렌더링 (회색 세로 구분선 포함)
+        window.renderTwoColumnEditor = function(opt, leftVal = '', rightVal = '') {
+            const wrapper = document.getElementById(`ingrWrapper_${opt}`);
+            if (!wrapper) return;
+
+            wrapper.innerHTML = `
+                <div class="flex items-stretch border border-neutral-200 rounded bg-white p-2 gap-4 relative">
+                    <!-- 왼쪽 단 -->
+                    <div class="flex-1 pr-3 border-r border-neutral-300">
+                        <div class="flex justify-between items-center mb-1 text-[11px] text-neutral-400 font-semibold px-1">
+                            <span>왼쪽 단</span>
+                            <button type="button" onclick="mergeToOneColumn('${opt}')" class="text-neutral-500 hover:text-neutral-900 underline">1단으로 합치기</button>
+                        </div>
+                        <textarea id="formIngredients_${opt}_left" rows="8" 
+                                  class="w-full bg-transparent focus:outline-none text-xs leading-relaxed resize-y min-h-[150px]">${leftVal}</textarea>
+                    </div>
+                    <!-- 오른쪽 단 -->
+                    <div class="flex-1 pl-1">
+                        <div class="mb-1 text-[11px] text-neutral-400 font-semibold px-1">오른쪽 단</div>
+                        <textarea id="formIngredients_${opt}_right" rows="8" 
+                                  class="w-full bg-transparent focus:outline-none text-xs leading-relaxed resize-y min-h-[150px]">${rightVal}</textarea>
+                    </div>
+                </div>
+            `;
+        };
+
+        // 1단으로 다시 합치기
+        window.mergeToOneColumn = function(opt) {
+            const leftTa = document.getElementById(`formIngredients_${opt}_left`);
+            const rightTa = document.getElementById(`formIngredients_${opt}_right`);
+            const combinedText = (leftTa ? leftTa.value.trim() : '') + '\n::\n' + (rightTa ? rightTa.value.trim() : '');
+
+            const wrapper = document.getElementById(`ingrWrapper_${opt}`);
+            if (!wrapper) return;
+
+            wrapper.innerHTML = `
+                <div class="border border-neutral-200 rounded bg-white p-2">
+                    <textarea id="formIngredients_${opt}" rows="8" oninput="checkAndSplitIngredients('${opt}')"
+                              placeholder="재료를 입력하세요. (:: 입력 시 2단으로 분리됩니다)" 
+                              class="w-full bg-transparent focus:outline-none text-xs leading-relaxed resize-y min-h-[160px]">${combinedText.trim()}</textarea>
+                </div>
+            `;
         };
 
         window.switchFormServingTab = function(val) {
@@ -755,9 +848,19 @@
 
                 const servingsMap = r.servingsMap || {};
                 ['1', '2', '3', '4', '5', '6'].forEach(opt => {
-                    const textarea = document.getElementById(`formIngredients_${opt}`);
-                    if (textarea && servingsMap[opt]) {
-                        textarea.value = servingsMap[opt].join('\n');
+                    if (servingsMap[opt]) {
+                        const arr = servingsMap[opt];
+                        const splitIdx = arr.indexOf('::');
+                        if (splitIdx !== -1) {
+                            const leftArr = arr.slice(0, splitIdx);
+                            const rightArr = arr.slice(splitIdx + 1);
+                            renderTwoColumnEditor(opt, leftArr.join('\n'), rightArr.join('\n'));
+                        } else {
+                            const textarea = document.getElementById(`formIngredients_${opt}`);
+                            if (textarea) {
+                                textarea.value = arr.join('\n');
+                            }
+                        }
                     }
                 });
 
@@ -857,9 +960,21 @@
 
             const servingsMap = {};
             ['1', '2', '3', '4', '5', '6'].forEach(opt => {
-                const textarea = document.getElementById(`formIngredients_${opt}`);
-                if (textarea && textarea.value.trim()) {
-                    const items = textarea.value.split('\n')
+                const leftTa = document.getElementById(`formIngredients_${opt}_left`);
+                const rightTa = document.getElementById(`formIngredients_${opt}_right`);
+                const singleTa = document.getElementById(`formIngredients_${opt}`);
+
+                let rawText = '';
+                if (leftTa && rightTa) {
+                    const leftVal = leftTa.value.trim();
+                    const rightVal = rightTa.value.trim();
+                    rawText = leftVal + (rightVal ? '\n::\n' + rightVal : '');
+                } else if (singleTa) {
+                    rawText = singleTa.value;
+                }
+
+                if (rawText.trim()) {
+                    const items = rawText.split('\n')
                         .map(i => i.trim())
                         .filter(i => i.length > 0);
                     if (items.length > 0) {
