@@ -647,11 +647,24 @@
                 return;
             }
 
-            ingrList.innerHTML = items.map(item => `
-                <li class="flex items-center justify-between py-0.5 px-1">
-                    <span class="font-medium text-neutral-900">• ${item}</span>
-                </li>
-            `).join('');
+            ingrList.innerHTML = items.map(item => {
+                // 재료 글자 맨 앞에 콜론(:)이 포함되어 있다면 불릿 없는 소제목으로 렌더링
+                if (item.startsWith(':')) {
+                    const subtitleText = item.substring(1).trim(); // 콜론을 제외한 텍스트 추출
+                    return `
+                        <li class="col-span-full pt-3 pb-1 font-bold text-neutral-950 text-xs">
+                            ${subtitleText}
+                        </li>
+                    `;
+                }
+
+                // 일반 재료는 기존대로 불릿과 함께 출력
+                return `
+                    <li class="flex items-center justify-between py-0.5 px-1">
+                        <span class="font-medium text-neutral-900">• ${item}</span>
+                    </li>
+                `;
+            }).join('');
         }
 
         window.deleteCurrentRecipe = async function() {
